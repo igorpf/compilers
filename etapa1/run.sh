@@ -1,4 +1,4 @@
 #!/bin/bash
-lex scanner.l
-gcc lex.yy.c
-./a.out
+make clean
+make
+./etapa1 < test.txt

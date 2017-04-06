@@ -36,6 +36,9 @@ int yywrap();
 int lineNumber;
 int running = TRUE;
 
+#include "hash.h"
+#include "tokens.h"
+
 %}
 
 
@@ -44,16 +47,17 @@ int running = TRUE;
 
 %%
 
-word                {return KW_WORD;}
+int                 {return KW_INT;}
+float               {return KW_FLOAT;}
 bool                {return KW_BOOL;}
-byte                {return KW_BYTE;}
+char                {return KW_CHAR;}
 if                  {return KW_IF;}
 then                {return KW_THEN;}
 else                {return KW_ELSE;}
-loop                {return KW_LOOP;}
-input               {return KW_INPUT;}
+for                 {return KW_FOR;}
+read                {return KW_READ;}
 return              {return KW_RETURN;}
-output              {return KW_OUTPUT;}
+print               {return KW_PRINT;}
 [-,;:(){}+*/<>=!&$] {return yytext[0];}
 "["                 {return yytext[0];}
 "]"                 {return yytext[0];}
@@ -67,9 +71,9 @@ output              {return KW_OUTPUT;}
 [0-9]+              {return LIT_INTEGER;}
 FALSE               {return LIT_FALSE;}
 TRUE                {return LIT_TRUE;}
-[A-Za-z_][A-Za-z_0-9]*      {return TK_IDENTIFIER;}
-"'"."'"             {return LIT_CHAR;}
-["].*["]            {return LIT_STRING;}
+[A-Za-z][A-Za-z_0-9]*      {/*hashInsert(TK_IDENTIFIER, yytext);*/return TK_IDENTIFIER;}
+"'"."'"             {/*hashInsert(LIT_CHAR, yytext);*/return LIT_CHAR;}
+["][^\"]*["]            {/*hashInsert(LIT_STRING, yytext);*/return LIT_STRING;}
 " "
 "\t"                
 "//".*
@@ -82,68 +86,7 @@ TRUE                {return LIT_TRUE;}
 
 
 %%
-
-int main () {
-    
-    int token;
-
-    int i = 0;
-    while(isRunning()) {   
-        token =  yylex();
-        switch(token) {
-            case KW_WORD: 
-            printf(" KW_WORD ");break;
-            case KW_BOOL: 
-            printf(" KW_BOOL ");break;
-            case KW_BYTE: 
-            printf(" KW_BYTE ");break;
-            case KW_LOOP: 
-            printf(" KW_LOOP ");break;
-            case KW_INPUT: 
-            printf(" KW_INPUT ");break;
-            case KW_IF: 
-            printf(" KW_IF ");break;
-            case KW_THEN:
-            printf(" KW_THEN ");break;
-            case KW_ELSE:
-            printf(" KW_ELSE ");break;
-            case KW_RETURN: 
-            printf(" KW_RETURN ");break;
-            case KW_OUTPUT: 
-            printf(" KW_OUTPUT ");break;
-            case TK_IDENTIFIER: 
-            printf(" TK_IDENTIFIER ");break;
-            case LIT_INTEGER: 
-            printf(" LIT_INTEGER ");break;
-            case OPERATOR_LE: 
-            printf(" OPERATOR_LE ");break;
-            case OPERATOR_GE: 
-            printf(" OPERATOR_GE ");break;
-            case OPERATOR_EQ: 
-            printf(" OPERATOR_EQ ");break;
-            case OPERATOR_NE: 
-            printf(" OPERATOR_NE ");break;
-            case OPERATOR_AND: 
-            printf(" OPERATOR_AND ");break;
-            case OPERATOR_OR: 
-            printf(" OPERATOR_OR ");break; 
-            case LIT_TRUE: 
-            printf(" LIT_TRUE ");break;
-            case LIT_FALSE: 
-            printf(" LIT_FALSE ");break;
-            case LIT_CHAR: 
-            printf(" LIT_CHAR ");break;
-            case LIT_STRING: 
-            printf(" LIT_STRING ");break;
-            case TOKEN_ERROR: 
-            printf(" TOKEN_ERROR ");break;
-            default: 
-            printf("%c", token);
-        }       
-    }
-}
+#include "main.c"
 int isRunning(){ return running;}
 int getLineNumber(){return lineNumber;}
-int yywrap(){
-    //running = FALSE; 
-    return 1;}
+int yywrap(){running = FALSE; return 1;}
