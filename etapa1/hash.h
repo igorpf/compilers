@@ -1,5 +1,6 @@
 #define HASH_SIZE 997
 
+
 typedef struct hash_struct {
 	int type;
 	char* text;
@@ -8,7 +9,7 @@ typedef struct hash_struct {
 
 HASH_NODE* Table[HASH_SIZE];
 
-void hashInit();
+void initMe();
 int hashAddress(char* text);
 HASH_NODE* hashFind(char* next);
 HASH_NODE* hashInsert(int type, char* text);

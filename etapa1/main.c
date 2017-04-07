@@ -1,11 +1,19 @@
-//#include "hash.h"
-//#include "tokens.h"
-//#include <stdio.h>
+#include "hash.h"
+#include "tokens.h"
+#include "lex.yy.h"
+#define TRUE 1
+#define FALSE 0
+
+
+int isRunning();
+int getLineNumber();
+int yywrap();
+void initMe();
+
 
 int main() {
     int token;
-
-    int i = 0;
+    initMe();
     while (isRunning()) {
         token = yylex();
         switch (token) {
@@ -85,4 +93,6 @@ int main() {
                 printf("%c", token);
         }
     }
+    printf("\n");
+    hashPrint();
 }

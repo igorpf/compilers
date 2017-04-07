@@ -1,1 +1,4 @@
-int a for "asdsadsa" "asdsadsa" "\ndasd\n"
+char a = 'a';
+print "asdsada" + "asdasdsa";
+for(int i=0;i<1;i++)
+

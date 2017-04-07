@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-void hashInit(){	
+void initMe(){
 	for(int i = 0; i<1;i++){
 		Table[i] = 0;
 	}
@@ -19,7 +19,7 @@ int hashAddress(char* text){
 HASH_NODE* hashFind(char* text) {
     //HASH_NODE* node;
     for(int i = 0; i < HASH_SIZE;i++) {
-        for (HASH_NODE* node=Table[i]; node; node = node->text) {
+        for (HASH_NODE* node=Table[i]; node; node = node->next) {
             if (strcmp(node->text, text)==0) {
                 return node;
             }
@@ -43,7 +43,7 @@ HASH_NODE* hashInsert(int type, char* text){
 void hashPrint(){
 	//HASH_NODE* node;
 	for(int i = 0; i < HASH_SIZE;i++) {
-		for (HASH_NODE* node=Table[i]; node; node = node->text) {
+		for (HASH_NODE* node=Table[i]; node; node = node->next) {
 			printf("Table[%d] has %s\n", i, node->text);
 		}
 	}

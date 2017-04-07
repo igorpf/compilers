@@ -1,30 +1,7 @@
 %{
-#define KW_WORD       256
-#define KW_BOOL       258
-#define KW_BYTE       259
-#define KW_IF         261
-#define KW_THEN       262
-#define KW_ELSE       263
-#define KW_LOOP       264
-#define KW_INPUT      266
-#define KW_RETURN     267
-#define KW_OUTPUT     268
+#include "hash.h"
+#include "tokens.h"
 
-#define OPERATOR_LE   270
-#define OPERATOR_GE   271
-#define OPERATOR_EQ   272
-#define OPERATOR_NE   273
-#define OPERATOR_AND  274
-#define OPERATOR_OR   275
-
-#define TK_IDENTIFIER 280
-#define LIT_INTEGER   281
-#define LIT_FALSE     283
-#define LIT_TRUE      284
-#define LIT_CHAR      285
-#define LIT_STRING    286
-
-#define TOKEN_ERROR   290
 
 #define TRUE 1
 #define FALSE 0
@@ -36,8 +13,7 @@ int yywrap();
 int lineNumber;
 int running = TRUE;
 
-#include "hash.h"
-#include "tokens.h"
+
 
 %}
 
@@ -71,9 +47,9 @@ print               {return KW_PRINT;}
 [0-9]+              {return LIT_INTEGER;}
 FALSE               {return LIT_FALSE;}
 TRUE                {return LIT_TRUE;}
-[A-Za-z][A-Za-z_0-9]*      {/*hashInsert(TK_IDENTIFIER, yytext);*/return TK_IDENTIFIER;}
-"'"."'"             {/*hashInsert(LIT_CHAR, yytext);*/return LIT_CHAR;}
-["][^\"]*["]            {/*hashInsert(LIT_STRING, yytext);*/return LIT_STRING;}
+[A-Za-z][A-Za-z_0-9]*      {hashInsert(TK_IDENTIFIER, yytext);return TK_IDENTIFIER;}
+"'"."'"             {hashInsert(LIT_CHAR, yytext);return LIT_CHAR;}
+["][^\"]*["]            {hashInsert(LIT_STRING, yytext);return LIT_STRING;}
 " "
 "\t"                
 "//".*
@@ -86,7 +62,6 @@ TRUE                {return LIT_TRUE;}
 
 
 %%
-#include "main.c"
 int isRunning(){ return running;}
 int getLineNumber(){return lineNumber;}
 int yywrap(){running = FALSE; return 1;}
