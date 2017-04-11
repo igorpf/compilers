@@ -1,8 +1,6 @@
-//#include "hash.h"
-//#include "tokens.h"
-//#include "lex.yy.h"
-//#define TRUE 1
-//#define FALSE 0
+#include "hash.h"
+#include "tokens.h"
+#include "lex.yy.h"
 
 
 int isRunning();
