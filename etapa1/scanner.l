@@ -2,14 +2,15 @@
 #include "hash.h"
 #include "tokens.h"
 
+#define TRUE 1
+#define FALSE 0
 
 int isRunning();
 int getLineNumber();
 int yywrap();
 
 int lineNumber;
-int running = 1;
-
+int running = TRUE;
 
 
 %}
@@ -62,4 +63,4 @@ return                 {return KW_RETURN;}
 %%
 int isRunning(){ return running;}
 int getLineNumber(){return lineNumber;}
-int yywrap(){running = 0; return 1;}
+int yywrap(){running = FALSE; return 1;}
