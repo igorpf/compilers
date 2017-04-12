@@ -1,4 +1,8 @@
 %{
+/*
+Igor Pires Ferreira - 242267
+Thor Castilhos Sanchotene - 242261 
+*/
 #include "hash.h"
 #include "tokens.h"
 
@@ -9,7 +13,7 @@ int isRunning();
 int getLineNumber();
 int yywrap();
 
-int lineNumber;
+int lineNumber = 1;
 int running = TRUE;
 
 
@@ -56,7 +60,6 @@ return                 {return KW_RETURN;}
 <COMMENT>\n            {lineNumber++;}
 <COMMENT>.  
 <COMMENT>"*/"          BEGIN(INITIAL);
-[0-9]+[A-Za-z_]+[A-Za-z_0-9]* {return TOKEN_ERROR;}
 .                      {return TOKEN_ERROR;}
 
 

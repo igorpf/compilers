@@ -1,3 +1,7 @@
+/*
+Igor Pires Ferreira - 242267
+Thor Castilhos Sanchotene - 242261 
+*/
 #include "hash.h"
 #include "tokens.h"
 #include "lex.yy.h"
