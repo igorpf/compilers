@@ -23,17 +23,17 @@ int hashAddress(char* text){
 
 HASH_NODE* hashFind(char* text) {    
     int address = hashAddress(text);
-    HASH_NODE* node = Table[address];
-    if(node && strcmp(node->text, text)==0)
-        return node;
-    else
-        return NULL;
+    HASH_NODE* node;
+    for (node = Table[address]; node; node = node->next)
+        if (node && strcmp(node->text, text) == 0) 
+            return node;
+    return NULL;
 }
 
 HASH_NODE* hashInsert(int type, char* text){
-	if(hashFind(text))
-		return NULL;
-	HASH_NODE* newNode;
+	HASH_NODE* newNode = hashFind(text);
+	if(newNode)
+		return newNode;
 	int address = hashAddress(text);
 	newNode = calloc(1, sizeof(HASH_NODE));
 	newNode->type = type;
