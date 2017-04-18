@@ -40,6 +40,9 @@ program: cmdlist
 cmdlist : cmd cmdlist | cmd
 ;
 cmd: LIT_INTEGER | TK_IDENTIFIER '=' LIT_INTEGER
+;
+expr: expr '+' expr | '('expr')' | LIT_INTEGER | TK_IDENTIFIER
+;
 %%
 
 int yyerror(char *what){
