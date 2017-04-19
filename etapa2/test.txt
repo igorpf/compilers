@@ -1,9 +1,40 @@
-short a = 'a';
-print "asdsada" + "asdasdsa";
-for(float i = 0.0; i < 1.3; i = i + 1)
-/*while (i <= 4) i = i - 1
-when (i == 3) then i = i + 1 else a = 'b'*/
+1+1
+/*
+byte a:0;
+byte i:0;
+float v[10]: 0 0 0 0 0 0 0 0 0 0;
+bool mat[1000];
+char c: 'x';
 
-short 1a = 'b';
+byte main()
+  {
+  for (i = 1 to 10)
+    print i " ";
 
-dw 7 dw 7 // mesmo endereco no hash
+  print " Digite um numero: \n";
+  read i;
+  for (i<10)
+    {
+    a = incn(a,1);
+    i = i + 1;
+    };
+  print "Incrementado algumas vezes fica " a "\n";
+  if (a==5) then
+    print "Parou no meio\n";
+  if (a==11) then
+    ;
+  if (a==11) then else
+    ;
+  ;;;
+  {;};
+  };
+
+byte incn (byte x, byte n)
+  {
+  return x+n;
+  };
+
+byte voidfunc() {;};
+*/
+
+

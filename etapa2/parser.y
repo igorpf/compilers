@@ -38,17 +38,25 @@ extern FILE * yyin;
 
 %%
 
-program: cmdlist 
+program:
+        cmdlist
         ;
-cmdlist : cmd cmdlist | cmd
+cmdlist:
+        cmd cmdlist
+        | cmd
         ;
-cmd: LIT_INTEGER | TK_IDENTIFIER '=' LIT_INTEGER
-        ;
-expr: expr '+' expr | '('expr')' | LIT_INTEGER | TK_IDENTIFIER
+cmd:    LIT_INTEGER
+        | TK_IDENTIFIER '=' LIT_INTEGER
+        | expr;
+expr:
+        expr '+' expr
+        | '('expr')'
+        | LIT_INTEGER
+        | TK_IDENTIFIER
         ;
 %%
 
 int yyerror(char *what){
-	fprintf(stderr, "Syntax error\n");
+	fprintf(stderr, "Syntax error. Line %d\n", getLineNumber());
 	exit(3);
 }

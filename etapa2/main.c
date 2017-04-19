@@ -13,6 +13,13 @@ int yywrap();
 void initMe();
 int yyparse(void);
 
+
+int main(int arc, char **argv)
+{
+    yyin = fopen(argv[1], "r");
+    exit (yyparse());
+}
+/*
 int main() {
     int token;
     initMe();
@@ -103,3 +110,4 @@ int main() {
     hashPrint();
 	exit(0);
 }
+*/
