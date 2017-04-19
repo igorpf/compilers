@@ -15,20 +15,20 @@
 #clean:
 #	rm *.o lex.yy.c lex.yy.h etapa1
 
-etapa2: lex.yy.o hash.o main.o
-	gcc -o etapa1 lex.yy.o main.o hash.o
-main.o: main.c
-	gcc -c main.c 
-hash.o: hash.c
-	gcc -c hash.c
+etapa2: lex.yy.o y.tab.o hash.o main.o
+	gcc -o etapa2 lex.yy.o main.o hash.o
 y.tab.o: y.tab.c
 	gcc -c y.tab.c
 y.tab.c: parser.y
 	yacc -d parser.y
+main.o: main.c y.tab.c
+	gcc -c main.c 
+hash.o: hash.c
+	gcc -c hash.c
 lex.yy.o: lex.yy.c
 	gcc -c lex.yy.c
-lex.yy.c: scanner.l
+lex.yy.c: scanner.l y.tab.c
 	flex --header-file=lex.yy.h scanner.l
 clean:
-	rm *.o lex.yy.* etapa2 y.tab.*
+	rm *.o lex.yy.* etapa2 y.tab.* parser.tab.*
 

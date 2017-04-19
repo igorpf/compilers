@@ -3,16 +3,15 @@ Igor Pires Ferreira - 242267
 Thor Castilhos Sanchotene - 242261 
 */
 #include "hash.h"
-#include "tokens.h"
 #include "lex.yy.h"
-#include "tab.yy.h"
+#include "y.tab.h"
 
 
 int isRunning();
 int getLineNumber();
 int yywrap();
 void initMe();
-
+int yyparse(void);
 
 int main() {
     int token;
@@ -99,7 +98,7 @@ int main() {
                 printf("%c", token);
         }
     }
-	yyparse();
+	// yyparse();
     printf("\n");
     hashPrint();
 	exit(0);
