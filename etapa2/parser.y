@@ -17,6 +17,7 @@ extern FILE * yyin;
 %token KW_ELSE 
 %token KW_WHILE 
 %token KW_FOR 
+%token KW_TO 
 %token KW_READ 
 %token KW_RETURN 
 %token KW_PRINT 
@@ -48,50 +49,99 @@ extern FILE * yyin;
 
 %%
 
-program:
-        cmdlist
+program: 
+        |global_var_def program
+        | func_def program
         ;
-cmdlist:
-        cmd cmdlist
-        | cmd
+
+global_var_def:
+        type TK_IDENTIFIER ':' value ';'
+        | type TK_IDENTIFIER '[' LIT_INTEGER']' ';'
+        | type TK_IDENTIFIER '[' LIT_INTEGER']' ':'  vector_param_list ';'        
+
+vector_param_list:
+        value
+        | value vector_param_list
+
+func_def:   
+        type TK_IDENTIFIER '(' func_def_param_list')' block
+        ;
+
+func_def_param_list: 
+        | func_param ',' func_def_param_list
+        | func_param 
+        ;
+        
+func_param:  type TK_IDENTIFIER
+        ;
+
+func_call:   
+        TK_IDENTIFIER '(' func_call_param_list')' 
+        ;        
+
+func_call_param:
+        TK_IDENTIFIER
+        | value
+        ;
+
+func_call_param_list:
+        | func_call_param
+        | func_call_param ',' func_call_param_list
         ;
 
 
-cmd:    flux_control
-        | TK_IDENTIFIER '=' expr
-        | KW_PRINT
-        | KW_READ
-        | KW_RETURN
-        | func
+
+
+block:  '{' cmd_list'}'
+        ;
+
+cmd_list:
+        cmd ';' cmd_list
+        | cmd ';'
+        ;
+
+
+cmd:    
+        |TK_IDENTIFIER '=' expr
+        | TK_IDENTIFIER'['expr']' '=' expr
+        | flux_control
+        | KW_READ TK_IDENTIFIER
+        | KW_PRINT print_list
+        | KW_RETURN expr
         | expr
         | block
         ;
+print_list:
+        element
+        | element print_list
+element:
+        LIT_STRING
+        | expr
 
 flux_control:
+        KW_IF '(' expr')' KW_THEN cmd
+        KW_IF '(' expr')' KW_THEN cmd KW_ELSE cmd
+        KW_FOR '(' expr')' cmd
+        KW_FOR '(' TK_IDENTIFIER '=' expr KW_TO expr ')' cmd
         ;
 
 
-func:   type TK_IDENTIFIER '(' paramlist')' block
-        | type TK_IDENTIFIER '(' ')' block
-        ;
 
 
-paramlist: 
-        | param ',' paramlist
-        | param 
-        ;
 
-param:  type TK_IDENTIFIER
-        ;
 
-block:  '{' cmdlist'}'
-        ;
+
+
 
 
 expr:   expr op expr
         | '('expr')'
+        | func_call
         | LIT_INTEGER
+        | LIT_CHAR
         | TK_IDENTIFIER
+        | TK_IDENTIFIER '[' LIT_CHAR']'
+        | TK_IDENTIFIER '[' LIT_INTEGER']'
         ;
 
 
