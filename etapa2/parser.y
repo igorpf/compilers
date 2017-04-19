@@ -36,6 +36,16 @@ extern FILE * yyin;
 
 %token TOKEN_ERROR
 
+
+
+%left '+' '-'
+%left '*' '/'
+%left '>' '<'
+
+ 
+%left KW_IF KW_ELSE
+
+
 %%
 
 program:
@@ -45,17 +55,76 @@ cmdlist:
         cmd cmdlist
         | cmd
         ;
-cmd:    LIT_INTEGER
-        | TK_IDENTIFIER '=' LIT_INTEGER
-        | expr;
-expr:
-        expr '+' expr
+
+
+cmd:    flux_control
+        | TK_IDENTIFIER '=' expr
+        | KW_PRINT
+        | KW_READ
+        | KW_RETURN
+        | func
+        | expr
+        | block
+        ;
+
+flux_control:
+        ;
+
+
+func:   type TK_IDENTIFIER '(' paramlist')' block
+        | type TK_IDENTIFIER '(' ')' block
+        ;
+
+
+paramlist: 
+        | param ',' paramlist
+        | param 
+        ;
+
+param:  type TK_IDENTIFIER
+        ;
+
+block:  '{' cmdlist'}'
+        ;
+
+
+expr:   expr op expr
         | '('expr')'
         | LIT_INTEGER
         | TK_IDENTIFIER
         ;
-%%
 
+
+op:     '+'
+        | '-'
+        | '/'
+        | '*'
+        | '>'
+        | '<'
+        | OPERATOR_LE
+        | OPERATOR_GE
+        | OPERATOR_EQ
+        | OPERATOR_NE
+        | OPERATOR_AND
+        | OPERATOR_OR
+        ;
+
+
+type:   KW_BYTE
+        | KW_SHORT 
+        | KW_LONG 
+        | KW_FLOAT 
+        | KW_DOUBLE
+        ;
+
+
+value:  LIT_INTEGER 
+        | LIT_REAL 
+        | LIT_CHAR 
+        | LIT_STRING 
+        ;
+
+%%
 int yyerror(char *what){
 	fprintf(stderr, "Syntax error. Line %d\n", getLineNumber());
 	exit(3);

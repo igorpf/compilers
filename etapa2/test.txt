@@ -1,4 +1,21 @@
-1+1
+a = 1+1
+b = 1<=0
+1123 > 42332
+
+float main (byte param1, float param2) {
+  
+}
+
+long voidfunc() {
+  
+}
+
+long oneparamfunc(float uniqueparam) {
+  
+}
+
+
+
 /*
 byte a:0;
 byte i:0;
