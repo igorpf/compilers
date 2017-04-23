@@ -43,7 +43,7 @@ extern FILE * yyin;
 %left '>' '<'
 
  
-%left KW_IF KW_ELSE
+%left KW_WHEN KW_ELSE
 
 
 %%
@@ -65,7 +65,7 @@ vector_param_list:
 	;
 
 func_def:   
-        type TK_IDENTIFIER '(' func_def_param_list')' cmd_list
+        type TK_IDENTIFIER '(' func_def_param_list')' cmd ';'
         ;
 
 func_def_param_list: 
@@ -138,6 +138,7 @@ expr:   expr op expr
         | '('expr')'
         | func_call
         | LIT_INTEGER
+	| LIT_REAL
         | LIT_CHAR
         | TK_IDENTIFIER
         | TK_IDENTIFIER '['expr']'
