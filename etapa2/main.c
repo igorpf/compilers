@@ -17,7 +17,10 @@ int yyparse(void);
 int main(int arc, char **argv)
 {
     yyin = fopen(argv[1], "r");
-    exit (yyparse());
+    //exit (yyparse());
+	yyparse();
+	//hashPrint();
+	exit(0);
 }
 /*
 int main() {

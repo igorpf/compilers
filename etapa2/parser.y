@@ -6,7 +6,6 @@ extern FILE * yyin;
 
 %}
 
-%token KW_INT 
 %token KW_BYTE 
 %token KW_SHORT 
 %token KW_LONG 
@@ -55,16 +54,18 @@ program:
         ;
 
 global_var_def:
-        type TK_IDENTIFIER ':' value ';'
-        | type TK_IDENTIFIER '[' LIT_INTEGER']' ';'
-        | type TK_IDENTIFIER '[' LIT_INTEGER']' ':'  vector_param_list ';'        
+        TK_IDENTIFIER ':' type value ';'
+        | TK_IDENTIFIER ':' type '[' LIT_INTEGER']' ';'
+        | TK_IDENTIFIER ':' type '[' LIT_INTEGER']'  vector_param_list ';' 
+	;       
 
 vector_param_list:
         value
         | value vector_param_list
+	;
 
 func_def:   
-        type TK_IDENTIFIER '(' func_def_param_list')' block
+        type TK_IDENTIFIER '(' func_def_param_list')' cmd_list
         ;
 
 func_def_param_list: 
@@ -89,21 +90,16 @@ func_call_param_list:
         | func_call_param ',' func_call_param_list
         ;
 
-
-
-
 block:  '{' cmd_list'}'
         ;
 
 cmd_list:
-        cmd ';' cmd_list
-        | cmd ';'
+        | cmd ';' cmd_list
         ;
 
-
 cmd:    
-        |TK_IDENTIFIER '=' expr
-        | TK_IDENTIFIER'['expr']' '=' expr
+        | TK_IDENTIFIER '=' expr
+        | TK_IDENTIFIER'#'expr '=' expr
         | flux_control
         | KW_READ TK_IDENTIFIER
         | KW_PRINT print_list
@@ -111,18 +107,22 @@ cmd:
         | expr
         | block
         ;
+
 print_list:
         element
         | element print_list
+	;
+
 element:
         LIT_STRING
         | expr
+	;
 
 flux_control:
-        KW_IF '(' expr')' KW_THEN cmd
-        KW_IF '(' expr')' KW_THEN cmd KW_ELSE cmd
-        KW_FOR '(' expr')' cmd
-        KW_FOR '(' TK_IDENTIFIER '=' expr KW_TO expr ')' cmd
+        KW_WHEN '('expr')' KW_THEN cmd
+        | KW_WHEN '('expr')' KW_THEN cmd KW_ELSE cmd
+        | KW_WHILE '('expr')' cmd
+        | KW_FOR '('TK_IDENTIFIER '=' expr KW_TO expr')' cmd
         ;
 
 
@@ -140,8 +140,7 @@ expr:   expr op expr
         | LIT_INTEGER
         | LIT_CHAR
         | TK_IDENTIFIER
-        | TK_IDENTIFIER '[' LIT_CHAR']'
-        | TK_IDENTIFIER '[' LIT_INTEGER']'
+        | TK_IDENTIFIER '['expr']'
         ;
 
 
