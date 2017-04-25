@@ -49,14 +49,14 @@ extern FILE * yyin;
 %%
 
 program: 
-        |global_var_def program
-        | func_def program
+        |global_var_def ';' program 
+        | func_def ';' program 
         ;
 
 global_var_def:
-        TK_IDENTIFIER ':' type value ';'
-        | TK_IDENTIFIER ':' type '[' LIT_INTEGER']' ';'
-        | TK_IDENTIFIER ':' type '[' LIT_INTEGER']'  vector_param_list ';' 
+        TK_IDENTIFIER ':' type value 
+        | TK_IDENTIFIER ':' type '[' LIT_INTEGER']' 
+        | TK_IDENTIFIER ':' type '[' LIT_INTEGER']'  vector_param_list 
 	;       
 
 vector_param_list:
@@ -65,7 +65,7 @@ vector_param_list:
 	;
 
 func_def:   
-        type TK_IDENTIFIER '(' func_def_param_list')' cmd ';'
+        type TK_IDENTIFIER '(' func_def_param_list')' cmd 
         ;
 
 func_def_param_list: 
