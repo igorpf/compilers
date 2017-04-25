@@ -139,29 +139,25 @@ flux_control:
 
 
 
-expr:   expr op expr
+expr:   expr '+' expr
+        | expr '-' expr
+        | expr '/' expr
+        | expr '*' expr
+        | expr '>' expr
+        | expr '<' expr
+        | expr OPERATOR_LE expr
+        | expr OPERATOR_GE expr
+        | expr OPERATOR_EQ expr
+        | expr OPERATOR_NE expr
+        | expr OPERATOR_AND expr
+        | expr OPERATOR_OR expr
         | '('expr')'
         | func_call
         | LIT_INTEGER
-	| LIT_REAL
+    	| LIT_REAL
         | LIT_CHAR
         | TK_IDENTIFIER
         | TK_IDENTIFIER '['expr']'
-        ;
-
-
-op:     '+'
-        | '-'
-        | '/'
-        | '*'
-        | '>'
-        | '<'
-        | OPERATOR_LE
-        | OPERATOR_GE
-        | OPERATOR_EQ
-        | OPERATOR_NE
-        | OPERATOR_AND
-        | OPERATOR_OR
         ;
 
 

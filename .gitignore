@@ -1,8 +1,10 @@
 **/lex.yy.*
 **/*.o
 **/a.out
+y.tab.*
 .idea/
 CMakeLists.txt
 cmake-build-debug/
 *~
 etapa*/etapa*
+y.output
