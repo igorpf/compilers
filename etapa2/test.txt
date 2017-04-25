@@ -1,4 +1,4 @@
-byte b: 2; 
+b: byte 2; 
 float a[4]: 1 2 3 4;
 float a[4];
 

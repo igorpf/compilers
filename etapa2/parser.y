@@ -6,6 +6,10 @@ extern FILE * yyin;
 
 %}
 
+%union {
+    HASH_NODE *symbol;
+}
+
 %token KW_BYTE 
 %token KW_SHORT 
 %token KW_LONG 
@@ -37,8 +41,9 @@ extern FILE * yyin;
 %token TOKEN_ERROR
 
 
-%left KW_WHEN KW_ELSE
-%left '>' '<'
+
+%left OPERATOR_OR OPERATOR_AND
+%left '<' '>' OPERATOR_LE OPERATOR_GE OPERATOR_EQ OPERATOR_NE
 %left '+' '-'
 %left '*' '/'
 

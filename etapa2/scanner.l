@@ -15,7 +15,6 @@ int yywrap();
 int lineNumber = 1;
 int running = TRUE;
 
-
 %}
 
 
@@ -48,11 +47,11 @@ return                 {return KW_RETURN;}
 "&&"                   {return OPERATOR_AND;}
 "||"                   {return OPERATOR_OR;}
 "\n"                   {lineNumber++;}
-[A-Za-z_][A-Za-z_0-9]* {hashInsert(TK_IDENTIFIER, yytext);return TK_IDENTIFIER;}
-[0-9]+\.[0-9]+         {hashInsert(LIT_REAL, yytext);return LIT_REAL;}
-[0-9]+                 {hashInsert(LIT_INTEGER, yytext);return LIT_INTEGER;}
-"'"."'"                {hashInsert(LIT_CHAR, yytext);return LIT_CHAR;}
-["][^\"]*["]           {hashInsert(LIT_STRING, yytext);return LIT_STRING;}
+[A-Za-z_][A-Za-z_0-9]* {yylval.symbol=hashInsert(TK_IDENTIFIER, yytext);return TK_IDENTIFIER;}
+[0-9]+\.[0-9]+         {yylval.symbol=hashInsert(LIT_REAL, yytext);return LIT_REAL;}
+[0-9]+                 {yylval.symbol=hashInsert(LIT_INTEGER, yytext);return LIT_INTEGER;}
+"'"."'"                {yylval.symbol=hashInsert(LIT_CHAR, yytext);return LIT_CHAR;}
+["][^\"]*["]           {yylval.symbol=hashInsert(LIT_STRING, yytext);return LIT_STRING;}
 " "
 "\t"                
 "//".*
