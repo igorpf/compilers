@@ -37,13 +37,13 @@ extern FILE * yyin;
 %token TOKEN_ERROR
 
 
-
+%left KW_WHEN KW_ELSE
+%left '>' '<'
 %left '+' '-'
 %left '*' '/'
-%left '>' '<'
+
 
  
-%left KW_WHEN KW_ELSE
 
 
 %%
