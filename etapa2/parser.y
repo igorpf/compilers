@@ -31,6 +31,7 @@ extern FILE * yyin;
 %token OPERATOR_NE 
 %token OPERATOR_AND 
 %token OPERATOR_OR 
+%token OPERATOR_NOT 
 
 %token TK_IDENTIFIER 
 %token LIT_INTEGER 
@@ -108,8 +109,7 @@ cmd:
         | flux_control
         | KW_READ TK_IDENTIFIER
         | KW_PRINT print_list
-        | KW_RETURN expr
-        | expr
+        | KW_RETURN expr        
         | block
         ;
 
@@ -130,15 +130,6 @@ flux_control:
         | KW_FOR '('TK_IDENTIFIER '=' expr KW_TO expr')' cmd
         ;
 
-
-
-
-
-
-
-
-
-
 expr:   expr '+' expr
         | expr '-' expr
         | expr '/' expr
@@ -151,6 +142,7 @@ expr:   expr '+' expr
         | expr OPERATOR_NE expr
         | expr OPERATOR_AND expr
         | expr OPERATOR_OR expr
+        | OPERATOR_NOT expr
         | '('expr')'
         | func_call
         | LIT_INTEGER

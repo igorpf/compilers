@@ -1,4 +1,5 @@
 float main (byte param1, float param2) {
+  when(9+1 >= 2)then
   print "um" 9+9 9<2;
   read nome_variavel;  
 };
