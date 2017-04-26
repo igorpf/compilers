@@ -141,8 +141,7 @@ expr:   expr '+' expr
         | expr OPERATOR_EQ expr
         | expr OPERATOR_NE expr
         | expr OPERATOR_AND expr
-        | expr OPERATOR_OR expr
-        | OPERATOR_NOT expr
+        | expr OPERATOR_OR expr        
         | '('expr')'
         | func_call
         | LIT_INTEGER
