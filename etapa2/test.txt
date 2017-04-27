@@ -1,26 +1,7 @@
 float main (byte param1, float param2) {
   when(9+1 >= 2)then
-  print "um" 9+9 9<2;  
-  read nome_variavel;  
+    print fun() func(a) func(a+6+s+2<231321>=2321,b);
+  print fun(,bv) ; //error
+  print fun(bv,) ; //error
+  
 };
-
-
-
-b: byte 2; 
-a: float [4] 1 2 3 4;
-
-
-float main (byte param1, float param2) {
-  print "um" 9+9 9<2;
-  read nome_variavel;  
-};
-
-long voidfunc() {
-  ;
-};
-
-long oneparamfunc(float uniqueparam) {
-  uniqueparam = main(2, 'a', "asdasda", 2.3);
-  uniqueparam = voidfunc()+ main(2, 'a', "asdasda", 2.3);
-};
-

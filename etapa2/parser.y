@@ -86,14 +86,14 @@ func_call:
         TK_IDENTIFIER '(' func_call_param_list')' 
         ;        
 
-func_call_param:
-        TK_IDENTIFIER
-        | value
+func_call_param: expr
         ;
 
-func_call_param_list:
-        | func_call_param
-        | func_call_param ',' func_call_param_list
+func_call_param_list: 
+        | func_call_param func_call_param_list_rest
+
+func_call_param_list_rest: 
+        |',' func_call_param func_call_param_list_rest
         ;
 
 block:  '{' cmd_list'}'
