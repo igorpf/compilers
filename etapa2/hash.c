@@ -50,7 +50,7 @@ void hashPrint(){
 	for(i = 0; i < HASH_SIZE;i++) {
 		HASH_NODE* node;
 		for (node=Table[i]; node; node = node->next) {
-			printf("Table[%d] has %s\n", i, node->text);
+			printf("Table[%d] has %s and type %d\n", i, node->text, node->type);
 		}
 	}
 }

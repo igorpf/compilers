@@ -8,6 +8,12 @@ Thor Castilhos Sanchotene - 242261
 #define TRUE 1
 #define FALSE 0
 
+#define SYMBOL_LIT_INTEGER 1
+#define SYMBOL_LIT_REAL 2
+#define SYMBOL_LIT_CHAR 3
+#define SYMBOL_LIT_STRING 4
+#define SYMBOL_IDENTIFIER 5
+
 int isRunning();
 int getLineNumber();
 int yywrap();
@@ -47,11 +53,11 @@ return                 {return KW_RETURN;}
 "&&"                   {return OPERATOR_AND;}
 "||"                   {return OPERATOR_OR;}
 "\n"                   {lineNumber++;}
-[A-Za-z_][A-Za-z_0-9]* {yylval.symbol=hashInsert(TK_IDENTIFIER, yytext);return TK_IDENTIFIER;}
-[0-9]+\.[0-9]+         {yylval.symbol=hashInsert(LIT_REAL, yytext);return LIT_REAL;}
-[0-9]+                 {yylval.symbol=hashInsert(LIT_INTEGER, yytext);return LIT_INTEGER;}
-"'"."'"                {yylval.symbol=hashInsert(LIT_CHAR, yytext);return LIT_CHAR;}
-["][^\"]*["]           {yylval.symbol=hashInsert(LIT_STRING, yytext);return LIT_STRING;}
+[A-Za-z_][A-Za-z_0-9]* {yylval.symbol=hashInsert(SYMBOL_IDENTIFIER, yytext);return TK_IDENTIFIER;}
+[0-9]+\.[0-9]+         {yylval.symbol=hashInsert(SYMBOL_LIT_REAL, yytext);return LIT_REAL;}
+[0-9]+                 {yylval.symbol=hashInsert(SYMBOL_LIT_INTEGER, yytext);return LIT_INTEGER;}
+"'"."'"                {yylval.symbol=hashInsert(SYMBOL_LIT_CHAR, yytext);return LIT_CHAR;}
+["][^\"]*["]           {yylval.symbol=hashInsert(SYMBOL_LIT_STRING, yytext);return LIT_STRING;}
 " "
 "\t"                
 "//".*
