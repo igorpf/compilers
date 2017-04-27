@@ -75,11 +75,13 @@ func_def:
         ;
 
 func_def_param_list: 
-        | func_param ',' func_def_param_list
-        | func_param 
+        | func_def_param func_def_param_list_rest
         ;
-        
-func_param:  type TK_IDENTIFIER
+
+func_def_param_list_rest:
+	| ',' func_def_param func_def_param_list_rest;
+        ;
+func_def_param:  type TK_IDENTIFIER
         ;
 
 func_call:   
@@ -91,6 +93,7 @@ func_call_param: expr
 
 func_call_param_list: 
         | func_call_param func_call_param_list_rest
+	;
 
 func_call_param_list_rest: 
         |',' func_call_param func_call_param_list_rest

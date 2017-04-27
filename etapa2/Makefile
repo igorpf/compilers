@@ -20,7 +20,7 @@ etapa2: lex.yy.o y.tab.o hash.o main.o
 y.tab.o: y.tab.c
 	gcc -c y.tab.c
 y.tab.c: parser.y
-	yacc -d parser.y
+	yacc -d parser.y -v
 main.o: main.c y.tab.c
 	gcc -c main.c 
 hash.o: hash.c

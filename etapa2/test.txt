@@ -1,7 +1,6 @@
-float main (byte param1, float param2) {
+float main (byte param1, float param2,) {
   when(9+1 >= 2)then
     print fun() func(a) func(a+6+s+2<231321>=2321,b);
   print fun(,bv) ; //error
   print fun(bv,) ; //error
-  
 };
