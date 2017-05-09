@@ -15,8 +15,8 @@
 #clean:
 #	rm *.o lex.yy.c lex.yy.h etapa1
 
-etapa2: lex.yy.o y.tab.o hash.o main.o
-	gcc -o etapa2 lex.yy.o main.o hash.o y.tab.o
+etapa2: lex.yy.o y.tab.o hash.o main.o ast.o
+	gcc -o etapa2 lex.yy.o main.o hash.o y.tab.o ast.o
 y.tab.o: y.tab.c
 	gcc -c y.tab.c
 y.tab.c: parser.y
@@ -25,6 +25,8 @@ main.o: main.c y.tab.c
 	gcc -c main.c 
 hash.o: hash.c
 	gcc -c hash.c
+ast.o: ast.c
+	gcc -c ast.c
 lex.yy.o: lex.yy.c
 	gcc -c lex.yy.c
 lex.yy.c: scanner.l y.tab.c

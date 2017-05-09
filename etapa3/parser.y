@@ -1,14 +1,15 @@
 %{
 #include<stdlib.h>
 #include<stdio.h>
-#include"hash.h"
+#include "hash.h"
+#include "ast.h"
 extern FILE * yyin;
 
 %}
 
 %union {
     HASH_NODE *symbol;
-    int number;
+    AST* ast;
 }
 
 %token KW_BYTE 
@@ -35,7 +36,7 @@ extern FILE * yyin;
 %token OPERATOR_NOT 
 
 %token TK_IDENTIFIER 
-%token <number> LIT_INTEGER 
+%token <smybol> LIT_INTEGER 
 %token LIT_REAL 
 %token LIT_CHAR 
 %token LIT_STRING 
@@ -49,7 +50,7 @@ extern FILE * yyin;
 %left '+' '-'
 %left '*' '/'
 
-%type <number> expr
+%type <astree> expr 
  
 
 
@@ -148,7 +149,7 @@ expr:   expr '+' expr               {$$= $1+$3; fprintf("Soma: %d\n", $$);}
         | expr OPERATOR_OR expr        
         | '('expr')'                {$$ = $2;}
         | func_call
-        | LIT_INTEGER               {$$=$1;}
+        | LIT_INTEGER               {$$=astCreate(AST_SYMBOL,0, $1,$3,0,0)$1;}
     	| LIT_REAL                  {$$=$1;}
         | LIT_CHAR                  {$$=$1;}
         | TK_IDENTIFIER             {$$=$1;}

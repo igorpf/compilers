@@ -2,7 +2,9 @@
 Igor Pires Ferreira - 242267
 Thor Castilhos Sanchotene - 242261 
 */
+
 #include "hash.h"
+#include "ast.h"
 #include "lex.yy.h"
 #include "y.tab.h"
 

@@ -4,6 +4,7 @@ Igor Pires Ferreira - 242267
 Thor Castilhos Sanchotene - 242261 
 */
 #include "hash.h"
+#include "ast.h"
 #include "y.tab.h"
 #define TRUE 1
 #define FALSE 0
