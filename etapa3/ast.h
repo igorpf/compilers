@@ -7,6 +7,8 @@
 
 #define AST_SYMBOL 0
 #define AST_ADD 1
+#define AST_CMD 1
+#define AST_CMDL 1
 
 #define MAX_SONS 4
 
@@ -17,6 +19,6 @@ typedef struct ast {
 } AST;
 
 AST* astCreate(int type, AST* *sons);
-void astPrint(void);
+void astPrint(int level, AST* node);
 
 #endif

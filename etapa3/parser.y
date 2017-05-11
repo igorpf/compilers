@@ -35,11 +35,11 @@ extern FILE * yyin;
 %token OPERATOR_OR 
 %token OPERATOR_NOT 
 
-%token TK_IDENTIFIER 
-%token <smybol> LIT_INTEGER 
-%token LIT_REAL 
-%token LIT_CHAR 
-%token LIT_STRING 
+%token <symbol> TK_IDENTIFIER 
+%token <symbol> LIT_INTEGER 
+%token <symbol> LIT_REAL 
+%token <symbol> LIT_CHAR 
+%token <symbol> LIT_STRING 
 
 %token TOKEN_ERROR
 
@@ -51,13 +51,15 @@ extern FILE * yyin;
 %left '*' '/'
 
 %type <astree> expr 
+%type <astree> cmd 
+%type <astree> cmd_list 
  
 
 
 %%
 
 program: 
-        |global_var_def ';' program 
+        |global_var_def ';' program      $$=astCreate(AST_CMD,0, $1,$3,0,0);
         | func_def ';' program 
         ;
 
@@ -105,11 +107,11 @@ block:  '{' cmd_list'}'
         ;
 
 cmd_list:
-        | cmd ';' cmd_list
+        | cmd ';' cmd_list          {$$=astCreate(AST_CMDL,0, $1,$3,0,0);}
         ;
 
 cmd:    
-        | TK_IDENTIFIER '=' expr
+        | TK_IDENTIFIER '=' expr   {$$=$3;}
         | TK_IDENTIFIER'#'expr '=' expr
         | flux_control
         | KW_READ TK_IDENTIFIER
@@ -149,10 +151,10 @@ expr:   expr '+' expr               {$$= $1+$3; fprintf("Soma: %d\n", $$);}
         | expr OPERATOR_OR expr        
         | '('expr')'                {$$ = $2;}
         | func_call
-        | LIT_INTEGER               {$$=astCreate(AST_SYMBOL,0, $1,$3,0,0)$1;}
-    	| LIT_REAL                  {$$=$1;}
-        | LIT_CHAR                  {$$=$1;}
-        | TK_IDENTIFIER             {$$=$1;}
+        | LIT_INTEGER               {$$=astCreate(AST_SYMBOL,0, $1,$3,0,0);}
+    	| LIT_REAL                  {$$=astCreate(AST_SYMBOL,0, $1,$3,0,0);}
+        | LIT_CHAR                  {$$=astCreate(AST_SYMBOL,0, $1,$3,0,0);}
+        | TK_IDENTIFIER             {$$=astCreate(AST_SYMBOL,0, $1,$3,0,0);}
         | TK_IDENTIFIER '['expr']'
         ;
 
