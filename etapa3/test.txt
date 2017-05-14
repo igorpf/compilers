@@ -1,0 +1,8 @@
+a: short 0;
+long main()
+  {
+  a = 10;
+  v#2 = v[10-1];
+  for (i = 1 to 10)
+    print i " ";
+  };
