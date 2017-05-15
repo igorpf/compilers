@@ -30,7 +30,7 @@ int main(int argc, char **argv)
     
     yyparse();
     
-    //hashPrint();
+
     fclose(yyin);
     
     exit(0);

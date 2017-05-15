@@ -51,7 +51,7 @@ extern FILE * yyin;
 %left '*' '/'
 
 
-%type <ast> value
+%type <ast> value type
 %type <ast> expr 
 %type <ast> cmd 
 %type <ast> cmd_list 
@@ -74,7 +74,7 @@ extern FILE * yyin;
 
 %%
 
-start:	program   {astPrint(0, $$=$1);}
+start:	program   {astPrint(0, $$=$1);astPrintSrc($$);}
 		;
 
 program: 
@@ -84,7 +84,7 @@ program:
         ;
 
 global_var_def:
-        TK_IDENTIFIER ':' type value                                   {$$=astCreate(AST_VAR_DEF,0, astCreate(AST_SYMBOL,$1, 0,0,0,0),$4,0,0);}
+        TK_IDENTIFIER ':' type value                                   {$$=astCreate(AST_VAR_DEF,0, astCreate(AST_SYMBOL,$1, 0,0,0,0), $3,$4,0);}
         | TK_IDENTIFIER ':' type '[' LIT_INTEGER']'                    {$$=astCreate(AST_VECTOR_DEF,0, astCreate(AST_SYMBOL,$1, 0,0,0,0),astCreate(AST_SYMBOL,$5, 0,0,0,0),0,0);}
         | TK_IDENTIFIER ':' type '[' LIT_INTEGER']' vector_param_list  {$$=astCreate(AST_INIT_VECTOR_DEF,0, astCreate(AST_SYMBOL,$1, 0,0,0,0),astCreate(AST_SYMBOL,$5, 0,0,0,0),$7,0);}
 	;       
@@ -186,11 +186,11 @@ expr:   expr '+' expr               {$$=astCreate(AST_ADD,0, $1,$3,0,0);}
         ;
 
 
-type:   KW_BYTE
-        | KW_SHORT
-        | KW_LONG
-        | KW_FLOAT
-        | KW_DOUBLE
+type:   KW_BYTE     { $$ = astCreate(AST_T_BYT, 0, 0, 0, 0, 0); }
+        | KW_SHORT  { $$ = astCreate(AST_T_SHO, 0, 0, 0, 0, 0); }    
+        | KW_LONG   { $$ = astCreate(AST_T_LON, 0, 0, 0, 0, 0); }
+        | KW_FLOAT  { $$ = astCreate(AST_T_FLO, 0, 0, 0, 0, 0); }
+        | KW_DOUBLE { $$ = astCreate(AST_T_DOU, 0, 0, 0, 0, 0); }
         ;
 
 

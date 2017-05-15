@@ -42,19 +42,25 @@
 #define AST_OP_AND 34
 #define AST_OP_OR 35
 #define AST_VECTOR_ACCESS 36
+#define AST_T_BYT 37
+#define AST_T_SHO 38
+#define AST_T_LON 39
+#define AST_T_FLO 40
+#define AST_T_DOU 41
+
 
 #define MAX_SONS 4
 
 typedef struct ast {
-	int type;
-	HASH_NODE* symbol;
-	struct ast *son0;
-	struct ast *son1;
-	struct ast *son2;
-	struct ast *son3;
+    int type;
+    HASH_NODE* symbol;
+    struct ast *son0;
+    struct ast *son1;
+    struct ast *son2;
+    struct ast *son3;
 } AST;
 
 AST* astCreate(int type, HASH_NODE* symbol, AST* son0, AST* son1, AST* son2, AST* son3);
 void astPrint(int level, AST* node);
-
+void astPrintSrc(AST* node);
 #endif
