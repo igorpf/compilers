@@ -10,10 +10,10 @@ AST* astCreate(int type, HASH_NODE* symbol, AST* son0, AST* son1, AST* son2, AST
 
     newNode->type = type;
     newNode->symbol = symbol;
-    newNode->son0 = son0;
-    newNode->son1 = son1;
-    newNode->son2 = son2;
-    newNode->son3 = son3;
+    newNode->sons[0] = son0;
+    newNode->sons[1] = son1;
+    newNode->sons[2] = son2;
+    newNode->sons[3] = son3;
     return newNode;
 }
 
@@ -158,11 +158,9 @@ void astPrint(int level, AST* node){
         fprintf(stderr, ")");
 
     fprintf(stderr, "\n");
-
-    astPrint(level+1,node->son0);
-    astPrint(level+1,node->son1);
-    astPrint(level+1,node->son2);
-    astPrint(level+1,node->son3);
+    for (i = 0; i < MAX_SONS; ++i) {
+        astPrint(level+1,node->sons[i]);    
+    }
 }
 
 void astPrintSrc(AST* node) {
@@ -176,222 +174,222 @@ void astPrintSrc(AST* node) {
             break;
         case AST_ADD: 
             fprintf(yyout, "(" );
-            astPrintSrc(node->son0);
+            astPrintSrc(node->sons[0]);
             fprintf(yyout, " + " );
-            astPrintSrc(node->son1);
+            astPrintSrc(node->sons[1]);
             fprintf(yyout, ")" );
             break;
         case AST_SUB: 
             fprintf(yyout, "(" );
-            astPrintSrc(node->son0);
+            astPrintSrc(node->sons[0]);
             fprintf(yyout, " - " );
-            astPrintSrc(node->son1);
+            astPrintSrc(node->sons[1]);
             fprintf(yyout, ")" );
             break;
         case AST_DIV: 
             fprintf(yyout, "(" );
-            astPrintSrc(node->son0);
+            astPrintSrc(node->sons[0]);
             fprintf(yyout, " / " );
-            astPrintSrc(node->son1);
+            astPrintSrc(node->sons[1]);
             fprintf(yyout, ")" );
             break;
         case AST_MULT: 
             fprintf(yyout, "(" );
-            astPrintSrc(node->son0);
+            astPrintSrc(node->sons[0]);
             fprintf(yyout, " * " );
-            astPrintSrc(node->son1);
+            astPrintSrc(node->sons[1]);
             fprintf(yyout, ")" );
             break;
         case AST_CMD: 
-            astPrintSrc(node->son0);
+            astPrintSrc(node->sons[0]);
             break;
         case AST_CMDL: 
             fprintf(yyout,"\n");
-            astPrintSrc(node->son0);
+            astPrintSrc(node->sons[0]);
             fprintf(yyout, ";\n");
-            astPrintSrc(node->son1);
+            astPrintSrc(node->sons[1]);
             break;
         case AST_CMD_BLOCK:
             fprintf(yyout,"{");
-            astPrintSrc(node->son0);
+            astPrintSrc(node->sons[0]);
             fprintf(yyout,"\n}");
             break;
         case AST_VAR_DEF: 
-            astPrintSrc(node->son0);
+            astPrintSrc(node->sons[0]);
             fprintf(yyout,":");
-            astPrintSrc(node->son1);
-            astPrintSrc(node->son2);
+            astPrintSrc(node->sons[1]);
+            astPrintSrc(node->sons[2]);
             break;  
         case AST_VECTOR_DEF: 
-            astPrintSrc(node->son0);
+            astPrintSrc(node->sons[0]);
             fprintf(yyout,":");
-            astPrintSrc(node->son1);
+            astPrintSrc(node->sons[1]);
             fprintf(yyout,"[");
-            astPrintSrc(node->son2);
+            astPrintSrc(node->sons[2]);
             fprintf(yyout,"]");
             break;  
         case AST_INIT_VECTOR_DEF: 
-            astPrintSrc(node->son0);
+            astPrintSrc(node->sons[0]);
             fprintf(yyout,":");
-            astPrintSrc(node->son1);
+            astPrintSrc(node->sons[1]);
             fprintf(yyout,"[");
-            astPrintSrc(node->son2);
+            astPrintSrc(node->sons[2]);
             fprintf(yyout,"]");
-            astPrintSrc(node->son3);
+            astPrintSrc(node->sons[3]);
             break;  
         case AST_VECTOR_PARAM_LIST: 
             fprintf(yyout," ");
-            astPrintSrc(node->son0);
+            astPrintSrc(node->sons[0]);
             fprintf(yyout," ");
-            astPrintSrc(node->son1);
+            astPrintSrc(node->sons[1]);
             break;  
         case AST_PRINT_LIST: 
             printf(" ");
-            astPrintSrc(node->son0);
+            astPrintSrc(node->sons[0]);
             printf(" ");
-            astPrintSrc(node->son1);
+            astPrintSrc(node->sons[1]);
             break;  
         case AST_PROGRAM: 
             fprintf(yyout,"\n");
-            astPrintSrc(node->son0);
+            astPrintSrc(node->sons[0]);
             fprintf(yyout,";\n");
-            astPrintSrc(node->son1);
+            astPrintSrc(node->sons[1]);
             break;  
         case AST_FUNC_DEF: 
-            astPrintSrc(node->son0);
-            astPrintSrc(node->son1);
+            astPrintSrc(node->sons[0]);
+            astPrintSrc(node->sons[1]);
             fprintf(yyout,"(");
-            astPrintSrc(node->son2);
+            astPrintSrc(node->sons[2]);
             fprintf(yyout,")\n");
-            astPrintSrc(node->son3);
+            astPrintSrc(node->sons[3]);
             break;
         case AST_FUNC_DEF_PARAM:
-            astPrintSrc(node->son0);
-            astPrintSrc(node->son1);
+            astPrintSrc(node->sons[0]);
+            astPrintSrc(node->sons[1]);
             break;
         case AST_FUNC_DEF_PARAM_LIST: 
-            astPrintSrc(node->son0);
-            if(node->son1)
-                astPrintSrc(node->son1);
+            astPrintSrc(node->sons[0]);
+            if(node->sons[1])
+                astPrintSrc(node->sons[1]);
             break;  
         case AST_FUNC_DEF_PARAM_LIST_REST: 
             fprintf(yyout, "," );
-            astPrintSrc(node->son0);
-            astPrintSrc(node->son1);
+            astPrintSrc(node->sons[0]);
+            astPrintSrc(node->sons[1]);
             break;  
         case AST_FUNC_CALL: 
-            astPrintSrc(node->son0);
+            astPrintSrc(node->sons[0]);
             fprintf(yyout, "(" );
-            astPrintSrc(node->son1);
+            astPrintSrc(node->sons[1]);
             fprintf(yyout, ")" );
             break;  
         case AST_FUNC_CALL_PARAM_LIST: 
-            astPrintSrc(node->son0);
-            astPrintSrc(node->son1);
+            astPrintSrc(node->sons[0]);
+            astPrintSrc(node->sons[1]);
             break;  
         case AST_FUNC_CALL_PARAM_LIST_REST: 
             fprintf(yyout, "," );
-            astPrintSrc(node->son0);
-            astPrintSrc(node->son1);
+            astPrintSrc(node->sons[0]);
+            astPrintSrc(node->sons[1]);
             break;  
         case AST_VAR_ASSIGNMENT: 
-            astPrintSrc(node->son0);
+            astPrintSrc(node->sons[0]);
             fprintf(yyout, "=");
-            astPrintSrc(node->son1);
+            astPrintSrc(node->sons[1]);
             break;  
         case AST_VECTOR_ASSIGNMENT: 
-            astPrintSrc(node->son0);
+            astPrintSrc(node->sons[0]);
             fprintf(yyout, "#");
-            astPrintSrc(node->son1);
+            astPrintSrc(node->sons[1]);
             fprintf(yyout, "=");
-            astPrintSrc(node->son2);
+            astPrintSrc(node->sons[2]);
             break;  
         case AST_READ: 
             fprintf(yyout, "read " );
-            astPrintSrc(node->son0);
+            astPrintSrc(node->sons[0]);
             break;  
         case AST_PRINT: 
             fprintf(yyout, "print " );
-            astPrintSrc(node->son0);
+            astPrintSrc(node->sons[0]);
             break;  
         case AST_RETURN: 
             fprintf(yyout, "return" );
-            astPrintSrc(node->son0);
+            astPrintSrc(node->sons[0]);
             break;  
         case AST_WHEN: 
             fprintf(yyout, "when(" );
-            astPrintSrc(node->son0);
+            astPrintSrc(node->sons[0]);
             fprintf(yyout, ") then \n" );
-            astPrintSrc(node->son1);
+            astPrintSrc(node->sons[1]);
             break;  
         case AST_WHEN_ELSE: 
             fprintf(yyout, "when(" );
-            astPrintSrc(node->son0);
+            astPrintSrc(node->sons[0]);
             fprintf(yyout, ") then \n" );
-            astPrintSrc(node->son1);
+            astPrintSrc(node->sons[1]);
             fprintf(yyout, "else \n" );
-            astPrintSrc(node->son2);
+            astPrintSrc(node->sons[2]);
             break;  
         case AST_WHILE: 
             fprintf(yyout, "while(" );
-            astPrintSrc(node->son0);
+            astPrintSrc(node->sons[0]);
             fprintf(yyout, ") \n" );
-            astPrintSrc(node->son1);
+            astPrintSrc(node->sons[1]);
             break;  
         case AST_FOR: 
             fprintf(yyout, "for(" );
-            astPrintSrc(node->son0);
+            astPrintSrc(node->sons[0]);
             fprintf(yyout, " = " );
-            astPrintSrc(node->son1);
+            astPrintSrc(node->sons[1]);
             fprintf(yyout, " to " );
-            astPrintSrc(node->son2);
+            astPrintSrc(node->sons[2]);
             fprintf(yyout, ") \n" );
-            astPrintSrc(node->son3);
+            astPrintSrc(node->sons[3]);
             break;  
         case AST_OP_GREATER: 
-            astPrintSrc(node->son0);
+            astPrintSrc(node->sons[0]);
             fprintf(yyout, " > " );
-            astPrintSrc(node->son1);
+            astPrintSrc(node->sons[1]);
             break;  
         case AST_OP_LESS: 
-            astPrintSrc(node->son0);
+            astPrintSrc(node->sons[0]);
             fprintf(yyout, " < " );
-            astPrintSrc(node->son1);
+            astPrintSrc(node->sons[1]);
             break;  
         case AST_OP_LE: 
-            astPrintSrc(node->son0);
+            astPrintSrc(node->sons[0]);
             fprintf(yyout, " <= " );
-            astPrintSrc(node->son1);
+            astPrintSrc(node->sons[1]);
             break;  
         case AST_OP_GE: 
-            astPrintSrc(node->son0);
+            astPrintSrc(node->sons[0]);
             fprintf(yyout, " >= " );
-            astPrintSrc(node->son1);
+            astPrintSrc(node->sons[1]);
             break;  
         case AST_OP_EQ: 
-            astPrintSrc(node->son0);
+            astPrintSrc(node->sons[0]);
             fprintf(yyout, " == " );
-            astPrintSrc(node->son1);
+            astPrintSrc(node->sons[1]);
             break;  
         case AST_OP_NE: 
-            astPrintSrc(node->son0);
+            astPrintSrc(node->sons[0]);
             fprintf(yyout, " != " );
-            astPrintSrc(node->son1);
+            astPrintSrc(node->sons[1]);
             break;  
         case AST_OP_AND: 
-            astPrintSrc(node->son0);
+            astPrintSrc(node->sons[0]);
             fprintf(yyout, " && " );
-            astPrintSrc(node->son1);
+            astPrintSrc(node->sons[1]);
             break;  
         case AST_OP_OR: 
-            astPrintSrc(node->son0);
+            astPrintSrc(node->sons[0]);
             fprintf(yyout, " || " );
-            astPrintSrc(node->son1);
+            astPrintSrc(node->sons[1]);
             break;      
         case AST_VECTOR_ACCESS: 
-            astPrintSrc(node->son0);
+            astPrintSrc(node->sons[0]);
             fprintf(yyout, "[" );
-            astPrintSrc(node->son1);
+            astPrintSrc(node->sons[1]);
             fprintf(yyout, "]" );
             break;      
         case AST_T_BYT: 
@@ -413,8 +411,8 @@ void astPrintSrc(AST* node) {
 
     // fprintf(yyout, " ");
 
-    // astPrintSrc(node->son0);
-    // astPrintSrc(node->son1);
-    // astPrintSrc(node->son2);
-    // astPrintSrc(node->son3);
+    // astPrintSrc(node->sons[0]);
+    // astPrintSrc(node->sons[1]);
+    // astPrintSrc(node->sons[2]);
+    // astPrintSrc(node->sons[3]);
 }

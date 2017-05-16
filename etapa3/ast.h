@@ -55,10 +55,11 @@
 typedef struct ast {
     int type;
     HASH_NODE* symbol;
-    struct ast *son0;
-    struct ast *son1;
-    struct ast *son2;
-    struct ast *son3;
+    struct ast* sons[MAX_SONS];
+    // struct ast *son0;
+    // struct ast *son1;
+    // struct ast *son2;
+    // struct ast *son3;
 } AST;
 
 AST* astCreate(int type, HASH_NODE* symbol, AST* son0, AST* son1, AST* son2, AST* son3);
