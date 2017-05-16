@@ -107,7 +107,7 @@ func_def_param_list_rest:
        ',' func_def_param func_def_param_list_rest   {$$=astCreate(AST_FUNC_DEF_PARAM_LIST_REST,0, $2,$3,0,0);}
        |                                             {$$=0;}
         ;
-func_def_param:  type TK_IDENTIFIER  {$$=astCreate(AST_SYMBOL,0, $1, astCreate(AST_SYMBOL,$2, 0,0,0,0),0,0);}
+func_def_param:  type TK_IDENTIFIER  {$$=astCreate(AST_FUNC_DEF_PARAM,0, $1, astCreate(AST_SYMBOL,$2, 0,0,0,0),0,0);}
         ;
 
 func_call:   
