@@ -192,39 +192,66 @@ void astPrintSrc(AST* node) {
             astPrintSrc(node->son0);
             break;
         case AST_CMDL: 
-            printf("\n");
+            fprintf(yyout,"\n");
             astPrintSrc(node->son0);
-            if(node->son1)
+            fprintf(yyout, ";\n");
+            if(node->son1){
                 astPrintSrc(node->son1);
+            }
+            break;
+        case AST_CMD_BLOCK:
+            fprintf(yyout,"{");
+            astPrintSrc(node->son0);
+            fprintf(yyout,"\n}");
             break;
         case AST_VAR_DEF: 
             astPrintSrc(node->son0);
-            printf(":");
+            fprintf(yyout,":");
             astPrintSrc(node->son1);
             astPrintSrc(node->son2);
             break;  
         case AST_VECTOR_DEF: 
-            fprintf(yyout, "AST_VECTOR_DEF" );
+            astPrintSrc(node->son0);
+            fprintf(yyout,":");
+            astPrintSrc(node->son1);
+            fprintf(yyout,"[");
+            astPrintSrc(node->son2);
+            fprintf(yyout,"]");
             break;  
         case AST_INIT_VECTOR_DEF: 
-            fprintf(yyout, "AST_INIT_VECTOR_DEF" );
+            astPrintSrc(node->son0);
+            fprintf(yyout,":");
+            astPrintSrc(node->son1);
+            fprintf(yyout,"[");
+            astPrintSrc(node->son2);
+            fprintf(yyout,"]");
+            astPrintSrc(node->son3);
             break;  
         case AST_VECTOR_PARAM_LIST: 
-            fprintf(yyout, "AST_VECTOR_PARAM_LIST" );
+            fprintf(yyout, "%s ", node->symbol->text);
             break;  
         case AST_PRINT_LIST: 
             fprintf(yyout, "AST_PRINT_LIST" );
             break;  
         case AST_PROGRAM: 
-            printf("\n");
+            fprintf(yyout,"\n");
             astPrintSrc(node->son0);
+            fprintf(yyout,";\n");
             astPrintSrc(node->son1);
             // astPrintSrc(node->son2);
             // astPrintSrc(node->son3);
             break;  
         case AST_FUNC_DEF: 
-            fprintf(yyout, "AST_FUNC_DEF" );
-            break;  
+            astPrintSrc(node->son0);
+            astPrintSrc(node->son1);
+            fprintf(yyout,"(");
+            astPrintSrc(node->son2);
+            fprintf(yyout,")\n");
+            astPrintSrc(node->son3);
+            break;
+        case AST_FUNC_DEF_PARAM:
+
+            break;
         case AST_FUNC_DEF_PARAM_LIST: 
             fprintf(yyout, "AST_FUNC_DEF_PARAM_LIST" );
             break;  
@@ -241,7 +268,9 @@ void astPrintSrc(AST* node) {
             fprintf(yyout, "AST_FUNC_CALL_PARAM_LIST_REST" );
             break;  
         case AST_VAR_ASSIGNMENT: 
-            fprintf(yyout, "AST_VAR_ASSIGNMENT" );
+            astPrintSrc(node->son0);
+            fprintf(yyout, "=");
+            astPrintSrc(node->son1);
             break;  
         case AST_VECTOR_ASSIGNMENT: 
             fprintf(yyout, "AST_VECTOR_ASSIGNMENT" );

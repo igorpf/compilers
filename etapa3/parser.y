@@ -85,8 +85,8 @@ program:
 
 global_var_def:
         TK_IDENTIFIER ':' type value                                   {$$=astCreate(AST_VAR_DEF,0, astCreate(AST_SYMBOL,$1, 0,0,0,0), $3,$4,0);}
-        | TK_IDENTIFIER ':' type '[' LIT_INTEGER']'                    {$$=astCreate(AST_VECTOR_DEF,0, astCreate(AST_SYMBOL,$1, 0,0,0,0),astCreate(AST_SYMBOL,$5, 0,0,0,0),0,0);}
-        | TK_IDENTIFIER ':' type '[' LIT_INTEGER']' vector_param_list  {$$=astCreate(AST_INIT_VECTOR_DEF,0, astCreate(AST_SYMBOL,$1, 0,0,0,0),astCreate(AST_SYMBOL,$5, 0,0,0,0),$7,0);}
+        | TK_IDENTIFIER ':' type '[' LIT_INTEGER']'                    {$$=astCreate(AST_VECTOR_DEF,0, astCreate(AST_SYMBOL,$1, 0,0,0,0),$3,astCreate(AST_SYMBOL,$5, 0,0,0,0),0);}
+        | TK_IDENTIFIER ':' type '[' LIT_INTEGER']' vector_param_list  {$$=astCreate(AST_INIT_VECTOR_DEF,0, astCreate(AST_SYMBOL,$1, 0,0,0,0),$3,astCreate(AST_SYMBOL,$5, 0,0,0,0),$7);}
 	;       
 
 vector_param_list:
@@ -95,7 +95,7 @@ vector_param_list:
 	;
 
 func_def:   
-        type TK_IDENTIFIER '(' func_def_param_list')' cmd  {$$=astCreate(AST_FUNC_DEF,0, astCreate(AST_SYMBOL,$2, 0,0,0,0),$4,$6,0);}
+        type TK_IDENTIFIER '(' func_def_param_list')' cmd  {$$=astCreate(AST_FUNC_DEF,0, $1,astCreate(AST_SYMBOL,$2, 0,0,0,0),$4,$6);}
         ;
 
 func_def_param_list:  
@@ -107,7 +107,7 @@ func_def_param_list_rest:
        ',' func_def_param func_def_param_list_rest   {$$=astCreate(AST_FUNC_DEF_PARAM_LIST_REST,0, $2,$3,0,0);}
        |                                             {$$=0;}
         ;
-func_def_param:  type TK_IDENTIFIER  {$$=astCreate(AST_SYMBOL,$2, 0,0,0,0);}
+func_def_param:  type TK_IDENTIFIER  {$$=astCreate(AST_SYMBOL,0, $1, astCreate(AST_SYMBOL,$2, 0,0,0,0),0,0);}
         ;
 
 func_call:   
@@ -128,7 +128,7 @@ func_call_param_list_rest:
         |                                             {$$=0;}
         ;
 
-block:  '{' cmd_list'}'   {$$=$2;}
+block:  '{' cmd_list'}'   {$$=astCreate(AST_CMD_BLOCK,0, $2,0,0,0);}
         ;
 
 cmd_list: 
