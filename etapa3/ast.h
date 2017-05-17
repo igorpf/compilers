@@ -49,6 +49,7 @@
 #define AST_T_DOU 41
 #define AST_CMD_BLOCK 42
 #define AST_FUNC_DEF_PARAM 43
+#define AST_PARENTHESES 44
 
 #define MAX_SONS 4
 

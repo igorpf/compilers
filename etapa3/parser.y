@@ -177,7 +177,7 @@ expr:   expr '+' expr               {$$=astCreate(AST_ADD,0, $1,$3,0,0);}
         | expr OPERATOR_NE expr     {$$=astCreate(AST_OP_NE,0, $1,$3,0,0);}
         | expr OPERATOR_AND expr    {$$=astCreate(AST_OP_AND,0, $1,$3,0,0);}
         | expr OPERATOR_OR expr     {$$=astCreate(AST_OP_OR,0, $1,$3,0,0);}      
-        | '('expr')'                {$$ = $2;}
+        | '('expr')'                {$$=astCreate(AST_PARENTHESES,0, $2,0,0,0);}
         | func_call
         | LIT_INTEGER               {$$=astCreate(AST_SYMBOL,$1, 0,0,0,0);}
     	| LIT_REAL                  {$$=astCreate(AST_SYMBOL,$1, 0,0,0,0);}
