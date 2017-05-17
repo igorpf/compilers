@@ -406,11 +406,4 @@ void astPrintSrc(AST* node) {
             fprintf(yyout, ")" );
             break;  
     }
-
-    // fprintf(yyout, " ");
-
-    // astPrintSrc(node->sons[0]);
-    // astPrintSrc(node->sons[1]);
-    // astPrintSrc(node->sons[2]);
-    // astPrintSrc(node->sons[3]);
 }
