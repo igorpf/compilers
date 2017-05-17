@@ -71,11 +71,12 @@ extern FILE * yyin;
 %type <ast> element
 %type <ast> flux_control
 %type <ast> start
+%type <ast> lit_int
 
 %%
 
 start:	program   {astPrint(0, $$=$1);astPrintSrc($$);}
-		;
+	;
 
 program: 
         global_var_def ';' program     {$$=astCreate(AST_PROGRAM,0, $1,$3,0,0);}
@@ -84,9 +85,9 @@ program:
         ;
 
 global_var_def:
-        TK_IDENTIFIER ':' type value                                   {$$=astCreate(AST_VAR_DEF,0, astCreate(AST_SYMBOL,$1, 0,0,0,0), $3,$4,0);}
-        | TK_IDENTIFIER ':' type '[' LIT_INTEGER']'                    {$$=astCreate(AST_VECTOR_DEF,0, astCreate(AST_SYMBOL,$1, 0,0,0,0),$3,astCreate(AST_SYMBOL,$5, 0,0,0,0),0);}
-        | TK_IDENTIFIER ':' type '[' LIT_INTEGER']' vector_param_list  {$$=astCreate(AST_INIT_VECTOR_DEF,0, astCreate(AST_SYMBOL,$1, 0,0,0,0),$3,astCreate(AST_SYMBOL,$5, 0,0,0,0),$7);}
+        TK_IDENTIFIER ':' type value                                   {$$=astCreate(AST_VAR_DEF,$1, $3,$4,0,0);}
+        | TK_IDENTIFIER ':' type '[' lit_int']'                    {$$=astCreate(AST_VECTOR_DEF,$1, $3,$5,0,0);}
+        | TK_IDENTIFIER ':' type '[' lit_int']' vector_param_list  {$$=astCreate(AST_INIT_VECTOR_DEF,$1, $3,$5,$7,0);}
 	;       
 
 vector_param_list:
@@ -95,7 +96,7 @@ vector_param_list:
 	;
 
 func_def:   
-        type TK_IDENTIFIER '(' func_def_param_list')' cmd  {$$=astCreate(AST_FUNC_DEF,0, $1,astCreate(AST_SYMBOL,$2, 0,0,0,0),$4,$6);}
+        type TK_IDENTIFIER '(' func_def_param_list')' cmd  {$$=astCreate(AST_FUNC_DEF,$2, $1,$4,$6,0);}
         ;
 
 func_def_param_list:  
@@ -107,11 +108,11 @@ func_def_param_list_rest:
        ',' func_def_param func_def_param_list_rest   {$$=astCreate(AST_FUNC_DEF_PARAM_LIST_REST,0, $2,$3,0,0);}
        |                                             {$$=0;}
         ;
-func_def_param:  type TK_IDENTIFIER  {$$=astCreate(AST_FUNC_DEF_PARAM,0, $1, astCreate(AST_SYMBOL,$2, 0,0,0,0),0,0);}
+func_def_param:  type TK_IDENTIFIER  {$$=astCreate(AST_FUNC_DEF_PARAM,$2, $1,0,0,0);}
         ;
 
 func_call:   
-        TK_IDENTIFIER '(' func_call_param_list')'  {$$=astCreate(AST_FUNC_CALL,0, astCreate(AST_SYMBOL,$1, 0,0,0,0),$3,0,0);}
+        TK_IDENTIFIER '(' func_call_param_list')'  {$$=astCreate(AST_FUNC_CALL,$1, $3,0,0,0);}
         ;        
 
 func_call_param: expr
@@ -137,10 +138,10 @@ cmd_list:
         ;
 
 cmd:    
-        TK_IDENTIFIER '=' expr           {$$=astCreate(AST_VAR_ASSIGNMENT,0, astCreate(AST_SYMBOL,$1, 0,0,0,0),$3,0,0);}
-        | TK_IDENTIFIER'#'expr '=' expr  {$$=astCreate(AST_VECTOR_ASSIGNMENT,0, astCreate(AST_SYMBOL,$1, 0,0,0,0),$3,$5,0);}
+        TK_IDENTIFIER '=' expr           {$$=astCreate(AST_VAR_ASSIGNMENT,$1, $3,0,0,0);}
+        | TK_IDENTIFIER'#'expr '=' expr  {$$=astCreate(AST_VECTOR_ASSIGNMENT,$1, $3,$5,0,0);}
         | flux_control
-        | KW_READ TK_IDENTIFIER          {$$=astCreate(AST_READ,0, astCreate(AST_SYMBOL,$2, 0,0,0,0),0,0,0);}
+        | KW_READ TK_IDENTIFIER          {$$=astCreate(AST_READ,$2, 0,0,0,0);}
         | KW_PRINT print_list            {$$=astCreate(AST_PRINT,0, $2,0,0,0);}
         | KW_RETURN expr                 {$$=astCreate(AST_RETURN,0, $2,0,0,0);}
         | block
@@ -161,7 +162,7 @@ flux_control:
         KW_WHEN '('expr')' KW_THEN cmd                        {$$=astCreate(AST_WHEN,0, $3,$6,0,0);}
         | KW_WHEN '('expr')' KW_THEN cmd KW_ELSE cmd          {$$=astCreate(AST_WHEN_ELSE,0, $3,$6,$8,0);}
         | KW_WHILE '('expr')' cmd                             {$$=astCreate(AST_WHILE,0, $3,$5,0,0);}
-        | KW_FOR '('TK_IDENTIFIER '=' expr KW_TO expr')' cmd  {$$=astCreate(AST_FOR,0, astCreate(AST_SYMBOL,$3, 0,0,0,0),$5,$7,$9);}
+        | KW_FOR '('TK_IDENTIFIER '=' expr KW_TO expr')' cmd  {$$=astCreate(AST_FOR,$3, $5,$7,$9,0);}
         ;
 
 expr:   expr '+' expr               {$$=astCreate(AST_ADD,0, $1,$3,0,0);}
@@ -182,7 +183,7 @@ expr:   expr '+' expr               {$$=astCreate(AST_ADD,0, $1,$3,0,0);}
     	| LIT_REAL                  {$$=astCreate(AST_SYMBOL,$1, 0,0,0,0);}
         | LIT_CHAR                  {$$=astCreate(AST_SYMBOL,$1, 0,0,0,0);}
         | TK_IDENTIFIER             {$$=astCreate(AST_SYMBOL,$1, 0,0,0,0);}
-        | TK_IDENTIFIER '['expr']'  {$$=astCreate(AST_VECTOR_ACCESS,0, astCreate(AST_SYMBOL,$1, 0,0,0,0),$3,0,0);}
+        | TK_IDENTIFIER '['expr']'  {$$=astCreate(AST_VECTOR_ACCESS,$1, $3,0,0,0);}
         ;
 
 
@@ -199,6 +200,9 @@ value:  LIT_INTEGER   {$$=astCreate(AST_SYMBOL,$1, 0,0,0,0);}
         | LIT_CHAR    {$$=astCreate(AST_SYMBOL,$1, 0,0,0,0);}
         | LIT_STRING  {$$=astCreate(AST_SYMBOL,$1, 0,0,0,0);}
         ;
+
+lit_int:  LIT_INTEGER {$$=astCreate(AST_SYMBOL,$1, 0,0,0,0);}
+          ;
 
 %%
 int yyerror(char *what){

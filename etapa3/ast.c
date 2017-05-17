@@ -151,6 +151,12 @@ void astPrint(int level, AST* node){
             break;
         case AST_T_DOU: 
             fprintf(stderr, "AST_T_DOU" );
+            break;
+        case AST_FUNC_DEF_PARAM: 
+            fprintf(stderr, "AST_FUNC_DEF_PARAM" );
+            break;
+        case AST_CMD_BLOCK: 
+            fprintf(stderr, "AST_CMD_BLOCK" );
     }
     if(node->symbol)
         fprintf(stderr, ",%s)", node->symbol->text);
@@ -215,27 +221,24 @@ void astPrintSrc(AST* node) {
             fprintf(yyout,"\n}");
             break;
         case AST_VAR_DEF: 
+            fprintf(yyout, "%s:", node->symbol->text);
             astPrintSrc(node->sons[0]);
-            fprintf(yyout,":");
             astPrintSrc(node->sons[1]);
-            astPrintSrc(node->sons[2]);
             break;  
         case AST_VECTOR_DEF: 
+            fprintf(yyout, "%s:", node->symbol->text);
             astPrintSrc(node->sons[0]);
-            fprintf(yyout,":");
-            astPrintSrc(node->sons[1]);
             fprintf(yyout,"[");
-            astPrintSrc(node->sons[2]);
+            astPrintSrc(node->sons[1]);
             fprintf(yyout,"]");
             break;  
         case AST_INIT_VECTOR_DEF: 
+            fprintf(yyout, "%s:", node->symbol->text);
             astPrintSrc(node->sons[0]);
-            fprintf(yyout,":");
-            astPrintSrc(node->sons[1]);
             fprintf(yyout,"[");
-            astPrintSrc(node->sons[2]);
+            astPrintSrc(node->sons[1]);
             fprintf(yyout,"]");
-            astPrintSrc(node->sons[3]);
+            astPrintSrc(node->sons[2]);
             break;  
         case AST_VECTOR_PARAM_LIST: 
             fprintf(yyout," ");
@@ -244,9 +247,9 @@ void astPrintSrc(AST* node) {
             astPrintSrc(node->sons[1]);
             break;  
         case AST_PRINT_LIST: 
-            printf(" ");
+            fprintf(yyout," ");
             astPrintSrc(node->sons[0]);
-            printf(" ");
+            fprintf(yyout," ");
             astPrintSrc(node->sons[1]);
             break;  
         case AST_PROGRAM: 
@@ -257,15 +260,14 @@ void astPrintSrc(AST* node) {
             break;  
         case AST_FUNC_DEF: 
             astPrintSrc(node->sons[0]);
+            fprintf(yyout, "%s(", node->symbol->text);
             astPrintSrc(node->sons[1]);
-            fprintf(yyout,"(");
-            astPrintSrc(node->sons[2]);
             fprintf(yyout,")\n");
-            astPrintSrc(node->sons[3]);
+            astPrintSrc(node->sons[2]);
             break;
         case AST_FUNC_DEF_PARAM:
             astPrintSrc(node->sons[0]);
-            astPrintSrc(node->sons[1]);
+            fprintf(yyout, "%s", node->symbol->text);
             break;
         case AST_FUNC_DEF_PARAM_LIST: 
             astPrintSrc(node->sons[0]);
@@ -278,9 +280,9 @@ void astPrintSrc(AST* node) {
             astPrintSrc(node->sons[1]);
             break;  
         case AST_FUNC_CALL: 
-            astPrintSrc(node->sons[0]);
+            fprintf(yyout, "%s", node->symbol->text);
             fprintf(yyout, "(" );
-            astPrintSrc(node->sons[1]);
+            astPrintSrc(node->sons[0]);
             fprintf(yyout, ")" );
             break;  
         case AST_FUNC_CALL_PARAM_LIST: 
@@ -293,20 +295,20 @@ void astPrintSrc(AST* node) {
             astPrintSrc(node->sons[1]);
             break;  
         case AST_VAR_ASSIGNMENT: 
-            astPrintSrc(node->sons[0]);
+            fprintf(yyout, "%s", node->symbol->text);
             fprintf(yyout, "=");
-            astPrintSrc(node->sons[1]);
+            astPrintSrc(node->sons[0]);
             break;  
         case AST_VECTOR_ASSIGNMENT: 
-            astPrintSrc(node->sons[0]);
+            fprintf(yyout, "%s", node->symbol->text);
             fprintf(yyout, "#");
-            astPrintSrc(node->sons[1]);
+            astPrintSrc(node->sons[0]);
             fprintf(yyout, "=");
-            astPrintSrc(node->sons[2]);
+            astPrintSrc(node->sons[1]);
             break;  
         case AST_READ: 
             fprintf(yyout, "read " );
-            astPrintSrc(node->sons[0]);
+            fprintf(yyout, "%s", node->symbol->text);
             break;  
         case AST_PRINT: 
             fprintf(yyout, "print " );
@@ -337,14 +339,12 @@ void astPrintSrc(AST* node) {
             astPrintSrc(node->sons[1]);
             break;  
         case AST_FOR: 
-            fprintf(yyout, "for(" );
+            fprintf(yyout, "for(%s = ", node->symbol->text);
             astPrintSrc(node->sons[0]);
-            fprintf(yyout, " = " );
-            astPrintSrc(node->sons[1]);
             fprintf(yyout, " to " );
-            astPrintSrc(node->sons[2]);
+            astPrintSrc(node->sons[1]);
             fprintf(yyout, ") \n" );
-            astPrintSrc(node->sons[3]);
+            astPrintSrc(node->sons[2]);
             break;  
         case AST_OP_GREATER: 
             astPrintSrc(node->sons[0]);
@@ -387,9 +387,9 @@ void astPrintSrc(AST* node) {
             astPrintSrc(node->sons[1]);
             break;      
         case AST_VECTOR_ACCESS: 
-            astPrintSrc(node->sons[0]);
+            fprintf(yyout, "%s", node->symbol->text);
             fprintf(yyout, "[" );
-            astPrintSrc(node->sons[1]);
+            astPrintSrc(node->sons[0]);
             fprintf(yyout, "]" );
             break;      
         case AST_T_BYT: 
