@@ -322,7 +322,7 @@ void astPrintSrc(AST* node) {
             astPrintSrc(node->sons[0]);
             fprintf(yyout, ") then \n" );
             astPrintSrc(node->sons[1]);
-            fprintf(yyout, "else \n" );
+            fprintf(yyout, " else \n" );
             astPrintSrc(node->sons[2]);
             break;  
         case AST_WHILE: 
