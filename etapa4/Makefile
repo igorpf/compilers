@@ -16,7 +16,7 @@
 #	rm *.o lex.yy.c lex.yy.h etapa1
 
 etapa4: lex.yy.o y.tab.o hash.o main.o ast.o semantic.o
-	gcc -o etapa3 lex.yy.o main.o hash.o y.tab.o ast.o semantic.o
+	gcc -o etapa4 lex.yy.o main.o hash.o y.tab.o ast.o semantic.o
 y.tab.o: y.tab.c
 	gcc -c y.tab.c
 y.tab.c: parser.y
@@ -34,5 +34,5 @@ lex.yy.o: lex.yy.c
 lex.yy.c: scanner.l y.tab.c
 	flex --header-file=lex.yy.h scanner.l
 clean:
-	rm *.o lex.yy.* etapa3 y.tab.*
+	rm *.o lex.yy.* etapa4 y.tab.*
 
