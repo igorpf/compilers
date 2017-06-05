@@ -19,13 +19,14 @@ int yyparse(void);
 int main(int argc, char **argv)
 {
     
-    if(argc <  3) {
-        printf("Use etapa3 <in_file_name> <out_file_name>\n");
+    if(argc <  2) {
+        printf("Use etapa4 <in_file_name>\n");
         exit(1);
     }
     
     yyin = fopen(argv[1], "r");
-    yyout = fopen(argv[2], "w");
+    if(!yyin)
+        exit(2);
     
     initMe();
     
