@@ -86,3 +86,16 @@ void semanticSetDeclarations(AST* node) {
         semanticSetDeclarations(node->sons[i]);
     }
 }
+void checkUtilization(AST* node) {
+    if(!node)
+        return;
+    switch(node->type) {
+        case AST_VAR_DEF:
+            break;
+        default:
+            break;
+    }
+    for(i=0; i < MAX_SONS; i++) {
+        checkUtilization(node->sons[i]);
+    }
+}

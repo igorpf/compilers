@@ -407,3 +407,18 @@ void astPrintSrc(AST* node) {
             break;  
     }
 }
+#define AST_T_BYT 37
+#define AST_T_SHO 38
+#define AST_T_LON 39
+#define AST_T_FLO 40
+#define AST_T_DOU 41
+int getType(int type) {
+    switch(type) {
+        case AST_T_BYT: return DATATYPE_BYTE;
+        case AST_T_SHO: return DATATYPE_SHORT;
+        case AST_T_FLO: return DATATYPE_FLOAT;
+        case AST_T_LON: return DATATYPE_LONG;
+        case AST_T_DOU: return DATATYPE_DOUBLE;
+        default: return 0;
+    }
+}

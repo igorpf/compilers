@@ -4,3 +4,4 @@
 
 
 void semanticSetDeclarations(AST* node);
+void checkUtilization(AST* node);
