@@ -89,12 +89,42 @@ void semanticSetDeclarations(AST* node) {
 void checkUtilization(AST* node) {
     if(!node)
         return;
+
     switch(node->type) {
-        case AST_VAR_DEF:
+        case AST_SYMBOL:
+        case AST_VAR_ASSIGNMENT:
+            fprintf(stderr, "Scalar %s %d\n", node->symbol->text, node->symbol->type);
+            if(node->symbol->type == SYMBOL_VEC) {
+                fprintf(stderr, "Vector being used as scalar");
+            }
+            else if(node->symbol->type == SYMBOL_FUN) {
+                fprintf(stderr, "Function being used as scalar");
+            }
+            break;
+        case AST_VECTOR_ACCESS:
+        case AST_VECTOR_ASSIGNMENT:
+            fprintf(stderr, "Vector %s %d\n", node->symbol->text, node->symbol->type);
+            if(node->symbol->type == SYMBOL_VAR) {
+                fprintf(stderr, "Scalar being used as vector");
+            }
+            else if(node->symbol->type == SYMBOL_FUN) {
+                fprintf(stderr, "Function being used as vector");
+            }
+            break;
+        
+        case AST_FUNC_CALL:
+            fprintf(stderr, "Function %s %d\n", node->symbol->text, node->symbol->type);
+            if(node->symbol->type == SYMBOL_VAR) {
+                fprintf(stderr, "Scalar being used as function");
+            }
+            else if(node->symbol->type == SYMBOL_VEC) {
+                fprintf(stderr, "Vector being used as function");
+            }
             break;
         default:
             break;
     }
+    int i;
     for(i=0; i < MAX_SONS; i++) {
         checkUtilization(node->sons[i]);
     }

@@ -76,7 +76,11 @@ extern FILE * yyin;
 
 %%
 
-start:	program   {astPrint(0, $$=$1);astPrintSrc($$);semanticSetDeclarations($$);hashCheckUndeclared();}
+start:	program   {astPrint(0, $$=$1);
+                   astPrintSrc($$);
+                   semanticSetDeclarations($$);
+                   hashCheckUndeclared();
+                   checkUtilization($$);}
 	;
 
 program: 
@@ -198,7 +202,7 @@ type:   KW_BYTE     { $$ = astCreate(AST_T_BYT, 0, 0, 0, 0, 0); }
 
 value:  LIT_INTEGER   {$$=astCreate(AST_SYMBOL,$1, 0,0,0,0); $1->dataType = DATATYPE_SHORT; }
         | LIT_REAL    {$$=astCreate(AST_SYMBOL,$1, 0,0,0,0); $1->dataType = DATATYPE_FLOAT; }
-        | LIT_CHAR    {$$=astCreate(AST_SYMBOL,$1, 0,0,0,0); $1->dataType = DATATYPE_CHAR; }
+        | LIT_CHAR    {$$=astCreate(AST_SYMBOL,$1, 0,0,0,0); $1->dataType = DATATYPE_BYTE; }
         | LIT_STRING  {$$=astCreate(AST_SYMBOL,$1, 0,0,0,0); $1->dataType = DATATYPE_STRING; }
         ;
 

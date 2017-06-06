@@ -22,6 +22,7 @@ Thor Castilhos Sanchotene - 242261
 #define DATATYPE_FLOAT 4
 #define DATATYPE_DOUBLE 5
 #define DATATYPE_BOOLEAN 6
+#define DATATYPE_STRING 7
 
 typedef struct hash_struct {
 	int type;
