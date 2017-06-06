@@ -1,0 +1,7 @@
+- soma de int + float = float
+-v[2/3] OK
+- expressao de indice de vetor tem que ser inteiro
+-v[2/3.1] ou v[a<b] erro
+-booleanos não são compatíveis com numéricos
+-colocar dataType do nodo
+-ponteiro da hash pra árvore (verificação de quantidade de parâmetros e tipos de funções)
