@@ -62,6 +62,7 @@ void semanticSetDeclarations(AST* node) {
 				numberOfArguments++;
 			node->symbol->numberOfArguments = numberOfArguments;
             break;
+        case AST_INIT_VECTOR_DEF:
         case AST_VECTOR_DEF:
             if(node->symbol && node->symbol->type != SYMBOL_IDENTIFIER) {
                 fprintf(stderr, "\nSemantic error, variable %s already defined",node->symbol->text); 
