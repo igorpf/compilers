@@ -1,0 +1,13 @@
+a: short 0;
+v: byte[2];
+long main(byte a)
+  {
+
+  a = 10;
+  //main#2 = v;
+  v#2 = v[10-1];
+  for (a = 1 to 10)
+    print "i" " ";
+
+  a = main(1,2);
+  };

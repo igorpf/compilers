@@ -16,7 +16,6 @@ int yyparse(void);
 
 int main(int argc, char **argv)
 {
-    
     if(argc <  2) {
         printf("Use etapa2 <file_name>\n");
         exit(1);

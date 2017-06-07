@@ -1,7 +1,8 @@
 #include "ast.h"
 
-#define DATATYPE_BYTE 1
-
-
 void semanticSetDeclarations(AST* node);
 void checkUtilization(AST* node);
+int dataType(AST* node);
+void checkDataTypes(AST* node);
+void checkDataType(AST* node);
+int hashCheckUndeclared(void);

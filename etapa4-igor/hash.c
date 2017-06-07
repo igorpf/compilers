@@ -55,3 +55,16 @@ void hashPrint(){
 	}
 }
 
+void hashCheckUndeclared(void) {
+	 int i;
+	 HASH_NODE* node;
+	 for(i=0; i < HASH_SIZE; i++){
+	 	for(node = Table[i]; node;node = node->next) {
+	 		if(node->type == SYMBOL_IDENTIFIER) {
+	 			fprintf(stderr, "Semantic error, %s not defined\n", node->text);	
+	 			exit(4);
+	 		}
+	 	}		
+	 }
+	
+}
