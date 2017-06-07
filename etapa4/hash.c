@@ -45,7 +45,6 @@ HASH_NODE* hashInsert(int type, char* text){
 }
 
 void hashPrint(){
-	//HASH_NODE* node;
 	int i;
 	for(i = 0; i < HASH_SIZE;i++) {
 		HASH_NODE* node;

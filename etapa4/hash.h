@@ -22,14 +22,13 @@ Thor Castilhos Sanchotene - 242261
 #define DATATYPE_LONG 4
 #define DATATYPE_FLOAT 5
 #define DATATYPE_DOUBLE 6
-//#define DATATYPE_STRING 7
 
 typedef struct hash_struct {
 	int type;
 	int dataType;
 	char* text;
 	struct hash_struct *next;
-	int numberOfArguments;
+	int numberOfParameters;
 } HASH_NODE;
 
 HASH_NODE* Table[HASH_SIZE];
