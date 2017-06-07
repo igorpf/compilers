@@ -129,3 +129,50 @@ void checkUtilization(AST* node) {
         checkUtilization(node->sons[i]);
     }
 }
+
+void checkDataTypes(AST* node) {
+        if(isArithmeticOp(node)) {
+        if(!isArithmeticOp(node->children[0])) {
+            if(isValidOperand(node->children[0])) {
+                if(!isNumericDatatype(node->children[0])) {
+                    fprintf(stderr, "Line %d: Operator %s is of an invalid type for arithmetic expression.\n", node->lineNumber, node->children[0]->symbol->text);
+                }
+            }
+            else 
+                fprintf(stderr, "Line %d: Operator is of an invalid type for arithmetic expression.\n", node->lineNumber);
+
+            if(isValidOperand(node->children[1])) {
+                if(!isNumericDatatype(node->children[1])) {
+                    fprintf(stderr, "Line %d: Operator %s is of an invalid type for arithmetic expression.\n", node->lineNumber, node->children[1]->symbol->text);
+                }
+            }
+            else 
+                fprintf(stderr, "Line %d: Operator is of an invalid type for arithmetic expression.\n", node->lineNumber);
+        }
+}
+int isValidOperand(AST* node) {
+    return node->type == AST_SYMBOL 
+        || node->type == AST_SYMBOL_VEC 
+        || node->type == AST_SYMBOL_LIT;
+}
+int isArithmeticOp(AST* node) {
+    return node->type == AST_ADD 
+        || node->type == AST_SUB 
+        || node->type == AST_MULT 
+        || node->type == AST_DIV;
+}
+int isRelationalOp(AST* node) {
+    return node->type == AST_OP_GREATER 
+        || node->type == AST_OP_LESS 
+        || node->type == AST_OP_LE 
+        || node->type == AST_OP_GE
+        || node->type == AST_OP_EQ
+        || node->type == AST_OP_NE;
+}
+int isNumericDatatype(AST* node) {
+    return node->symbol->dataType == DATATYPE_BYTE 
+        || node->symbol->dataType == DATATYPE_SHORT 
+        || node->symbol->dataType == DATATYPE_FLOAT 
+        || node->symbol->dataType == DATATYPE_LONG 
+        || node->symbol->dataType == DATATYPE_DOUBLE;
+}
