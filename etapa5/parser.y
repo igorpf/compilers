@@ -77,7 +77,7 @@ extern FILE * yyin;
 
 %%
 
-start:	program   {astPrint(0, $$=$1);astPrintSrc($$);semanticSetDeclarations($$);hashCheckUndeclared();tacPrintBack(tacGenerate($$));}
+start:	program   {astPrint(0, $$=$1);astPrintSrc($$);semanticSetDeclarations($$);hashCheckUndeclared();tacPrintForward(tacReverse(tacGenerate($$)));}
 	;
 
 program: 

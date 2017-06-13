@@ -75,3 +75,10 @@ HASH_NODE* makeTemp(void) {
 	sprintf(buffer, "tEmmmPoRRaryy%d", serialNumber++);
 	return hashInsert(SYMBOL_IDENTIFIER, buffer);
 }
+HASH_NODE* makeLabel(void) {
+	static int serialNumber = 0;
+	static char buffer[128];
+
+	sprintf(buffer, "llabelllLLll%d", serialNumber++);
+	return hashInsert(SYMBOL_LABEL, buffer);
+}
