@@ -10,16 +10,15 @@
 #define TAC_IFZ      4
 #define TAC_LABEL    5
 #define TAC_UNKNOWN  6
-/*
-TAC_ARG
-TAC_VEC_READ
-TAC_VEC_WRITE
-TAC_CALL
-TAC_MOV
-TAC_RETURN
-TAC_BEGIN_FUN
-TAC_END_FUN
-*/
+#define TAC_ARG      7
+#define TAC_VEC_READ 8
+#define TAC_VEC_WRITE 9
+#define TAC_CALL     10
+#define TAC_MOV      11
+#define TAC_RETURN   12
+#define TAC_BEGIN_FUN 13
+#define TAC_END_FUN  14
+
 
 typedef struct tac_struct {
     int type;
@@ -35,4 +34,5 @@ void tacPrintBack(TAC* last);
 TAC* tacGenerate(AST* node);
 TAC* tacReverse(TAC* tac);
 void tacPrintForward(TAC* first);
+TAC* tacCreateOp(int type, TAC* op1, TAC* op2);
 #endif

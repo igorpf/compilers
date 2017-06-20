@@ -3,7 +3,7 @@ v: byte[2];
 long main(byte c)
   {
 
-  a = 10;
+  a = 10+1;
   v#2 = v[10-1];
   for (v = 1 to 10)
     print "i" " ";
