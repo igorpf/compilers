@@ -1,12 +1,12 @@
 a: short 0;
 v: byte[2];
-long main(byte a)
+long main(byte c)
   {
 
   a = 10;
   v#2 = v[10-1];
-  for (a = 1 to 10)
+  for (v = 1 to 10)
     print "i" " ";
 
-  a = main(1,2);
+  a = main(1);
   };

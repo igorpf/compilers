@@ -16,17 +16,21 @@ TAC* tacCreate(int type, HASH_NODE* res, HASH_NODE* op1, HASH_NODE* op2) {
 TAC* tacJoin(TAC* l1,TAC* l2) {
     if(!l1) return l2;
     if(!l2) return l1;
-    TAC* tac;
-    for(tac=l2;tac;tac = tac->prev) {
-
+    TAC* tac = l2;
+    printf("Antes do loop\n");
+    while(tac->prev) {
+        tac=tac->prev;
+        printf("TAC: %d\n", tac->type);
     }
+    printf("Depois do loop\n");
     tac->prev = l1;
+    l1->next = l2;
     return l2;
 }
 void tacPrintBack(TAC* last) {
     fprintf(stderr, "Imprimindo código gerado\n");
     TAC* tac;
-    for(tac = last; tac; tac=tac->prev) {
+    for(tac = last; tac; tac=tac->prev) {        
         if(tac->type==TAC_SYMBOL)
             continue;
         fprintf(stderr, "TAC(");
@@ -116,7 +120,7 @@ TAC* tacGenerate(AST* node) {
     if(!node)
         return 0;
     int i;
-    TAC* code[MAX_SONS], result = 0;
+    TAC * code[MAX_SONS], *result;
     //process children node
     for(i=0; i<MAX_SONS; i++) {
         code[i] = tacGenerate(node->sons[i]);
@@ -131,7 +135,7 @@ TAC* tacGenerate(AST* node) {
                 tacCreate(TAC_ADD, makeTemp(), code[0]?code[0]->res:0, code[1]?code[1]->res:0)
                 )); 
             break;
-        case AST_WHEN_THEN:
+        case AST_WHEN:
             makeWhenThen(code[0],code[1]);
 
         default:

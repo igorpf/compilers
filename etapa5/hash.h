@@ -15,6 +15,7 @@ Thor Castilhos Sanchotene - 242261
 #define SYMBOL_LIT_CHAR 6
 #define SYMBOL_LIT_STRING 7
 #define SYMBOL_IDENTIFIER 8
+#define SYMBOL_LABEL 9
 
 #define DATATYPE_BOOL 1
 #define DATATYPE_BYTE 2

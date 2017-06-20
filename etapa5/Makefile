@@ -16,7 +16,7 @@
 #	rm *.o lex.yy.c lex.yy.h etapa1
 
 etapa5: lex.yy.o y.tab.o hash.o main.o ast.o semantic.o tacs.o
-	gcc -o etapa5 lex.yy.o main.o hash.o y.tab.o ast.o semantic.o tacs.o
+	gcc -o etapa5 lex.yy.o main.o hash.o y.tab.o ast.o semantic.o tacs.o -g
 y.tab.o: y.tab.c
 	gcc -c y.tab.c
 y.tab.c: parser.y
@@ -25,6 +25,8 @@ main.o: main.c y.tab.c
 	gcc -c main.c 
 hash.o: hash.c
 	gcc -c hash.c
+tacs.o: tacs.c
+	gcc -c tacs.c
 ast.o: ast.c
 	gcc -c ast.c
 semantic.o: semantic.c

@@ -4,11 +4,12 @@
 #include "hash.h"
 #include "ast.h"
 
-#define TAC_SYMBOL 1
-#define TAC_ADD    2
-#define TAC_SUB    3
-#define TAC_IFZ    4
-#define TAC_LABEL  5
+#define TAC_SYMBOL   1
+#define TAC_ADD      2
+#define TAC_SUB      3
+#define TAC_IFZ      4
+#define TAC_LABEL    5
+#define TAC_UNKNOWN  6
 /*
 TAC_ARG
 TAC_VEC_READ
