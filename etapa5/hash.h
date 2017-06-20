@@ -5,10 +5,11 @@ Thor Castilhos Sanchotene - 242261
 #ifndef HASH_HEADER
 #define HASH_HEADER
 
+#define HASH_SIZE 997
+
 #define SYMBOL_VAR 1
 #define SYMBOL_VEC 2
 #define SYMBOL_FUN 3
-
 #define SYMBOL_LIT_INTEGER 4
 #define SYMBOL_LIT_REAL 5
 #define SYMBOL_LIT_CHAR 6
