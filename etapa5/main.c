@@ -20,7 +20,7 @@ int main(int argc, char **argv)
 {
     
     if(argc <  2) {
-        printf("Use etapa4 <in_file_name>\n");
+        printf("Use etapa5 <in_file_name>\n");
         exit(1);
     }
     
@@ -32,6 +32,7 @@ int main(int argc, char **argv)
     
     yyparse();
     
+    hashPrint();
 
     fclose(yyin);
     

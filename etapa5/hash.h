@@ -5,31 +5,29 @@ Thor Castilhos Sanchotene - 242261
 #ifndef HASH_HEADER
 #define HASH_HEADER
 
-#define HASH_SIZE 997
 #define SYMBOL_VAR 1
 #define SYMBOL_VEC 2
 #define SYMBOL_FUN 3
-#define SYMBOL_LABEL 4
 
-#define SYMBOL_LIT_INTEGER 1
-#define SYMBOL_LIT_REAL 2
-#define SYMBOL_LIT_CHAR 3
-#define SYMBOL_LIT_STRING 4
-#define SYMBOL_IDENTIFIER 5
+#define SYMBOL_LIT_INTEGER 4
+#define SYMBOL_LIT_REAL 5
+#define SYMBOL_LIT_CHAR 6
+#define SYMBOL_LIT_STRING 7
+#define SYMBOL_IDENTIFIER 8
 
-#define DATATYPE_BYTE 1
-#define DATATYPE_SHORT 2
-#define DATATYPE_LONG 3
-#define DATATYPE_FLOAT 4
-#define DATATYPE_DOUBLE 5
-#define DATATYPE_BOOLEAN 6
+#define DATATYPE_BOOL 1
+#define DATATYPE_BYTE 2
+#define DATATYPE_SHORT 3
+#define DATATYPE_LONG 4
+#define DATATYPE_FLOAT 5
+#define DATATYPE_DOUBLE 6
 
 typedef struct hash_struct {
 	int type;
 	int dataType;
 	char* text;
-    struct ast *symbol;
 	struct hash_struct *next;
+	int numberOfParameters;
 } HASH_NODE;
 
 HASH_NODE* Table[HASH_SIZE];
@@ -39,7 +37,6 @@ int hashAddress(char* text);
 HASH_NODE* hashFind(char* next);
 HASH_NODE* hashInsert(int type, char* text);
 void hashPrint();
-void hashCheckUndeclared(void);
 HASH_NODE* makeTemp(void);
 HASH_NODE* makeLabel(void);
 #endif

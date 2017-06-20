@@ -9,7 +9,7 @@ Thor Castilhos Sanchotene - 242261
 
 void initMe(){
 	int i;
-	for(i = 0; i<1;i++){
+	for(i = 0; i < 1; i++){
 		Table[i] = 0;
 	}
 }
@@ -45,7 +45,6 @@ HASH_NODE* hashInsert(int type, char* text){
 }
 
 void hashPrint(){
-	//HASH_NODE* node;
 	int i;
 	for(i = 0; i < HASH_SIZE;i++) {
 		HASH_NODE* node;
@@ -55,19 +54,7 @@ void hashPrint(){
 	}
 }
 
-void hashCheckUndeclared(void) {
-	 int i;
-	 HASH_NODE* node;
-	 for(i=0; i < HASH_SIZE; i++){
-	 	for(node = Table[i]; node;node = node->next) {
-	 		if(node->type == SYMBOL_IDENTIFIER) {
-	 			fprintf(stderr, "Semantic error, %s not defined\n", node->text);	
-	 			exit(4);
-	 		}
-	 	}		
-	 }
-	
-}
+
 HASH_NODE* makeTemp(void) {
 	static int serialNumber = 0;
 	static char buffer[128];
@@ -75,6 +62,7 @@ HASH_NODE* makeTemp(void) {
 	sprintf(buffer, "tEmmmPoRRaryy%d", serialNumber++);
 	return hashInsert(SYMBOL_IDENTIFIER, buffer);
 }
+
 HASH_NODE* makeLabel(void) {
 	static int serialNumber = 0;
 	static char buffer[128];

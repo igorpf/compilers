@@ -77,9 +77,15 @@ extern FILE * yyin;
 
 %%
 
-start:	program   {astPrint(0, $$=$1);astPrintSrc($$);semanticSetDeclarations($$);hashCheckUndeclared();tacPrintForward(tacReverse(tacGenerate($$)));}
+start:	program   {astPrint(0, $$=$1);
+                   astPrintSrc($$);
+                   semanticSetDeclarations($$);
+                   hashCheckUndeclared();
+                   checkUtilization($$);
+                   checkDataTypes($$);
+                   tacPrintForward(tacReverse(tacGenerate($$)));
+                  }
 	;
-
 program: 
         global_var_def ';' program     {$$=astCreate(AST_PROGRAM,0, $1,$3,0,0);}
         | func_def ';' program         {$$=astCreate(AST_PROGRAM,0, $1,$3,0,0);}
@@ -197,13 +203,13 @@ type:   KW_BYTE     { $$ = astCreate(AST_T_BYT, 0, 0, 0, 0, 0); }
         ;
 
 
-value:  LIT_INTEGER   {$$=astCreate(AST_SYMBOL,$1, 0,0,0,0); $1->dataType = DATATYPE_SHORT; }
-        | LIT_REAL    {$$=astCreate(AST_SYMBOL,$1, 0,0,0,0); $1->dataType = DATATYPE_FLOAT; }
-        | LIT_CHAR    {$$=astCreate(AST_SYMBOL,$1, 0,0,0,0); $1->dataType = DATATYPE_CHAR; }
-        | LIT_STRING  {$$=astCreate(AST_SYMBOL,$1, 0,0,0,0); $1->dataType = DATATYPE_STRING; }
+value:  LIT_INTEGER   {$$=astCreate(AST_SYMBOL,$1, 0,0,0,0); }
+        | LIT_REAL    {$$=astCreate(AST_SYMBOL,$1, 0,0,0,0); }
+        | LIT_CHAR    {$$=astCreate(AST_SYMBOL,$1, 0,0,0,0); }
+        | LIT_STRING  {$$=astCreate(AST_SYMBOL,$1, 0,0,0,0); }
         ;
 
-lit_int:  LIT_INTEGER {$$=astCreate(AST_SYMBOL,$1, 0,0,0,0);$1->dataType = DATATYPE_SHORT; }
+lit_int:  LIT_INTEGER {$$=astCreate(AST_SYMBOL,$1, 0,0,0,0);}
           ;
 
 %%
