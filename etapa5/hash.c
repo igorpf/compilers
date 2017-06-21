@@ -13,6 +13,7 @@ void initMe(){
 		Table[i] = 0;
 	}
 }
+
 int hashAddress(char* text){
 	int address = 1, i;
 	for(i = 0; i < strlen(text) ;i++){
@@ -53,7 +54,6 @@ void hashPrint(){
 		}
 	}
 }
-
 
 HASH_NODE* makeTemp(void) {
 	static int serialNumber = 0;

@@ -2,6 +2,7 @@
 Igor Pires Ferreira - 242267
 Thor Castilhos Sanchotene - 242261 
 */
+
 #ifndef HASH_HEADER
 #define HASH_HEADER
 

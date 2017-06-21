@@ -101,6 +101,7 @@ void checkUtilization(AST* node) {
     switch(node->type) {
         case AST_SYMBOL:
         case AST_VAR_ASSIGNMENT:
+	case AST_FOR:
             if(node->symbol->type == SYMBOL_VEC) {
                 fprintf(stderr, "\nSemantic error, vector being used as scalar");
 				hasSemanticError = 1;
