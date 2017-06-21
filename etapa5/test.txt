@@ -3,10 +3,12 @@ v: byte[2];
 long main(byte c)
   {
 
-  a = 10+1;
+  a = 123+13;
   v#2 = v[10-1];
   for (v = 1 to 10)
     print "i" " ";
-
+  when(1>2) then
+   print "aaa";
   a = main(1);
+  return 12345;
   };

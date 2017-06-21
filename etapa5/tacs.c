@@ -17,9 +17,10 @@ TAC* tacJoin(TAC* l1,TAC* l2) {
     if(!l1) return l2;
     if(!l2) return l1;
     TAC* tac = l2;
+    // printf("join %d\n", tac->prev?1:0);
     while(tac->prev) {
+        printf("TAC: %d\n", tac->type);
         tac=tac->prev;
-        // printf("TAC: %d\n", tac->type);
     }
     tac->prev = l1;
     l1->next = l2;
@@ -87,6 +88,36 @@ void tacPrintForward(TAC* first) {
             case TAC_SUB:
                 fprintf(stderr, "TAC_SUB");
                 break;
+            case TAC_MUL:
+                fprintf(stderr, "TAC_MUL");
+                break;
+            case TAC_DIV:
+                fprintf(stderr, "TAC_DIV");
+                break;
+            case TAC_GT:
+                fprintf(stderr, "TAC_GT");
+                break;
+            case TAC_LT:
+                fprintf(stderr, "TAC_LT");
+                break;
+            case TAC_GE:
+                fprintf(stderr, "TAC_GE");
+                break;
+            case TAC_LE:
+                fprintf(stderr, "TAC_LE");
+                break;
+            case TAC_EQ:
+                fprintf(stderr, "TAC_EQ");
+                break;
+            case TAC_NE:
+                fprintf(stderr, "TAC_NE");
+                break;
+            case TAC_AND:
+                fprintf(stderr, "TAC_AND");
+                break;
+            case TAC_OR:
+                fprintf(stderr, "TAC_OR");
+                break;
             case TAC_IFZ:
                 fprintf(stderr, "TAC_IFZ");
                 break;
@@ -120,6 +151,21 @@ void tacPrintForward(TAC* first) {
             case TAC_END_FUN:
                 fprintf(stderr, "TAC_END_FUN");
                 break;
+            case TAC_T_BYT:
+                fprintf(stderr, "TAC_T_BYT");
+                break;
+            case TAC_T_SHO:
+                fprintf(stderr, "TAC_T_SHO");
+                break;
+            case TAC_T_LON:
+                fprintf(stderr, "TAC_T_LON");
+                break;
+            case TAC_T_FLO:
+                fprintf(stderr, "TAC_T_FLO");
+                break;
+            case TAC_T_DOU:
+                fprintf(stderr, "TAC_T_DOU");
+                break;
         }
         if(tac->res)
             fprintf(stderr, ", %s", tac->res->text);
@@ -148,17 +194,88 @@ TAC* tacGenerate(AST* node) {
     //process this node
     switch(node->type) {
         case AST_SYMBOL:
-            printf("simbolo\n");
             result = tacCreate(TAC_SYMBOL, node->symbol, 0, 0); 
             break;
         case AST_ADD:
-        printf("add\n");
-            result = tacCreateOp(TAC_ADD,code[0],code[1]);                 
+            result = tacCreateOp(TAC_ADD,code[0],code[1]);
             break;
+        case AST_SUB:
+            result = tacCreateOp(TAC_SUB,code[0],code[1]);
+            break;
+        case AST_MULT:
+            result = tacCreateOp(TAC_MUL,code[0],code[1]);
+            break;
+        case AST_DIV:
+            result = tacCreateOp(TAC_DIV,code[0],code[1]);
+            break;
+        case AST_OP_GREATER:
+            result = tacCreateOp(TAC_GT,code[0],code[1]);
+            break;
+        case AST_OP_LESS:
+            result = tacCreateOp(TAC_LT,code[0],code[1]);
+            break;
+        case AST_OP_LE:
+            result = tacCreateOp(TAC_LE,code[0],code[1]);
+            break;
+        case AST_OP_GE:
+            result = tacCreateOp(TAC_GE,code[0],code[1]);
+            break;
+        case AST_OP_EQ:
+            result = tacCreateOp(TAC_EQ,code[0],code[1]);
+            break;
+        case AST_OP_NE:
+            result = tacCreateOp(TAC_NE,code[0],code[1]);
+            break;
+        case AST_OP_AND:
+            result = tacCreateOp(TAC_AND,code[0],code[1]);
+            break;
+        case AST_OP_OR:
+            result = tacCreateOp(TAC_OR,code[0],code[1]);
+            break;
+        case AST_T_BYT:
+            result = tacCreate(TAC_T_BYT,0,0,0);
+            break;
+        case AST_T_SHO:
+            result = tacCreate(TAC_T_SHO,0,0,0);
+            break;
+        case AST_T_LON:
+            result = tacCreate(TAC_T_LON,0,0,0);
+            break;
+        case AST_T_FLO:
+            result = tacCreate(TAC_T_FLO,0,0,0);
+            break;
+        case AST_T_DOU:
+            result = tacCreate(TAC_T_DOU,0,0,0);
+            break;
+        case AST_RETURN:
+            result = tacJoin(code[0], tacCreate(TAC_RETURN,code[0]?code[0]->res:0,0,0));
+            break;
+        case AST_CMDL:
+        case AST_PROGRAM:
+        case AST_PRINT_LIST:
+        case AST_VECTOR_PARAM_LIST:
+        // case AST_FUNC_DEF_PARAM_LIST: esses aqui tem os tipos junto. 
+        //                                 tem que fazer outro case?
+        // case AST_FUNC_DEF_PARAM_LIST_REST:
+        case AST_FUNC_CALL_PARAM_LIST:
+        case AST_FUNC_CALL_PARAM_LIST_REST:
+            result = tacJoin(code[0], code[1]);
+            break;
+        case AST_VAR_ASSIGNMENT:
+            result = tacJoin(code[0], tacCreate(TAC_MOV,node->symbol,code[0]?code[0]->res:0,0));
+            break;
+        case AST_CMD:
+        case AST_CMD_BLOCK:
+            result = code[0];
+            break;
+        // case AST_FUNC_DEF_PARAM:
+
+            // break;
         case AST_WHEN:
-            makeWhenThen(code[0],code[1]);
+            result = makeWhenThen(code[0],code[1]);
+            break;
         default:
-        printf("defout\n");
+            printf("caiu no default %d\n", node->type);
             result = tacJoin(tacJoin(tacJoin(code[0],code[1]),code[2]),code[3]);
             break;
     }

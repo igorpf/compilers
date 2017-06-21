@@ -18,6 +18,23 @@
 #define TAC_RETURN   12
 #define TAC_BEGIN_FUN 13
 #define TAC_END_FUN  14
+#define TAC_MUL      15
+#define TAC_DIV      16
+#define TAC_GT       17
+#define TAC_LT       18
+#define TAC_GE       19
+#define TAC_LE       20
+#define TAC_EQ       21
+#define TAC_NE       22
+#define TAC_AND      23
+#define TAC_OR       24
+#define TAC_T_BYT    25
+#define TAC_T_SHO    26
+#define TAC_T_LON    27
+#define TAC_T_FLO    28
+#define TAC_T_DOU    29 
+#define TAC_FUNC_DEF_PARAM 30 
+
 
 
 typedef struct tac_struct {
