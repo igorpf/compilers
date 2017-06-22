@@ -187,6 +187,15 @@ void tacPrintForward(TAC* first) {
             case TAC_PARAM:
                 fprintf(stderr, "TAC_PARAM");
                 break;
+            case TAC_VAR_DEC:
+                fprintf(stderr, "TAC_VAR_DEC");
+                break;
+            case TAC_VEC_DEC:
+                fprintf(stderr, "TAC_VEC_DEC");
+                break;
+            case TAC_VEC_DEC_INIT:
+                fprintf(stderr, "TAC_VEC_DEC_INIT");
+                break;
         }
         if(tac->res)
             fprintf(stderr, ", %s", tac->res->text);
@@ -273,7 +282,6 @@ TAC* tacGenerate(AST* node) {
             break;
         case AST_CMDL:
         case AST_PROGRAM:        
-        case AST_VECTOR_PARAM_LIST:
          case AST_FUNC_DEF_PARAM_LIST: //esses aqui tem os tipos junto. 
         //                                 tem que fazer outro case?
          case AST_FUNC_DEF_PARAM_LIST_REST:        
@@ -323,6 +331,15 @@ TAC* tacGenerate(AST* node) {
             break;
         case AST_FUNC_DEF:
             result = makeFuncDef(code[0],code[1],code[2],node->symbol);
+            break;
+        case AST_VAR_DEF:
+            result = tacJoin(code[0],tacCreate(TAC_VAR_DEC, node->symbol,code[1]?code[1]->res:0,0));
+            break;
+        case AST_VECTOR_DEF:
+            result = tacJoin(code[0],tacCreate(TAC_VEC_DEC, node->symbol,code[1]?code[1]->res:0,0));
+            break;
+        case AST_INIT_VECTOR_DEF:
+            result = tacJoin(code[0], tacJoin(code[2],tacCreate(TAC_VEC_DEC_INIT, node->symbol,code[1]?code[1]->res:0,0)));
             break;
         default:
             printf("caiu no default %d\n", node->type);

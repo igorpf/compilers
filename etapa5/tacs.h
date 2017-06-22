@@ -38,8 +38,10 @@
 #define TAC_MOV_IND  32
 #define TAC_PRINT    33
 #define TAC_READ     34
-#define TAC_PARAM     35
-
+#define TAC_PARAM    35
+#define TAC_VAR_DEC  36
+#define TAC_VEC_DEC  37
+#define TAC_VEC_DEC_INIT  38
 
 
 typedef struct tac_struct {
