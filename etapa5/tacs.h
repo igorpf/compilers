@@ -35,6 +35,10 @@
 #define TAC_T_DOU    29 
 #define TAC_FUNC_DEF_PARAM 30 
 #define TAC_JUMP     31
+#define TAC_MOV_IND  32
+#define TAC_PRINT    33
+#define TAC_READ     34
+#define TAC_PARAM     35
 
 
 

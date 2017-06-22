@@ -157,7 +157,7 @@ cmd:
         ;
 
 print_list:
-        element               
+        element               {$$=astCreate(AST_PRINT_LIST,0, $1,0,0,0);}
         | element print_list  {$$=astCreate(AST_PRINT_LIST,0, $1,$2,0,0);}
 	;
 

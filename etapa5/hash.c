@@ -59,7 +59,7 @@ HASH_NODE* makeTemp(void) {
 	static int serialNumber = 0;
 	static char buffer[128];
 
-	sprintf(buffer, "tEmmmPoRRaryy%d", serialNumber++);
+	sprintf(buffer, "__TEMPORARY%d__", serialNumber++);
 	return hashInsert(SYMBOL_IDENTIFIER, buffer);
 }
 
@@ -67,6 +67,6 @@ HASH_NODE* makeLabel(void) {
 	static int serialNumber = 0;
 	static char buffer[128];
 
-	sprintf(buffer, "llabelllLLll%d", serialNumber++);
+	sprintf(buffer, "__LABEL%d__", serialNumber++);
 	return hashInsert(SYMBOL_LABEL, buffer);
 }

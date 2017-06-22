@@ -7,6 +7,7 @@ TAC* makeWhenThen(TAC* code0, TAC* code1);
 TAC* makeWhenThenElse(TAC* code0, TAC* code1, TAC* code2);
 TAC* makeWhile(TAC* code0, TAC* code1);
 TAC* makeFor(TAC* code0, TAC* code1, TAC* code2, HASH_NODE *symbol);
+TAC* makeFuncDef(TAC* type, TAC* params, TAC* cmdBlock, HASH_NODE *symbol);
 
 TAC* tacCreate(int type, HASH_NODE* res, HASH_NODE* op1, HASH_NODE* op2) {
     TAC* newTac;
@@ -174,6 +175,18 @@ void tacPrintForward(TAC* first) {
 			case TAC_JUMP:
                 fprintf(stderr, "TAC_JUMP");
                 break;
+            case TAC_MOV_IND:
+                fprintf(stderr, "TAC_MOV_IND");
+                break;
+            case TAC_PRINT:
+                fprintf(stderr, "TAC_PRINT");
+                break;
+            case TAC_READ:
+                fprintf(stderr, "TAC_READ");
+                break;
+            case TAC_PARAM:
+                fprintf(stderr, "TAC_PARAM");
+                break;
         }
         if(tac->res)
             fprintf(stderr, ", %s", tac->res->text);
@@ -259,25 +272,31 @@ TAC* tacGenerate(AST* node) {
             result = tacJoin(code[0], tacCreate(TAC_RETURN,code[0]?code[0]->res:0,0,0));
             break;
         case AST_CMDL:
-        case AST_PROGRAM:
-        case AST_PRINT_LIST:
+        case AST_PROGRAM:        
         case AST_VECTOR_PARAM_LIST:
          case AST_FUNC_DEF_PARAM_LIST: //esses aqui tem os tipos junto. 
         //                                 tem que fazer outro case?
-         case AST_FUNC_DEF_PARAM_LIST_REST:
-        case AST_FUNC_CALL_PARAM_LIST:
-        case AST_FUNC_CALL_PARAM_LIST_REST:
+         case AST_FUNC_DEF_PARAM_LIST_REST:        
             result = tacJoin(code[0], code[1]);
             break;
         case AST_VAR_ASSIGNMENT:
             result = tacJoin(code[0], tacCreate(TAC_MOV,node->symbol,code[0]?code[0]->res:0,0));
+            break;
+        case AST_VECTOR_ASSIGNMENT:
+            result =
+            tacJoin( 
+                tacJoin(code[0],code[1]),
+                    tacCreate(TAC_MOV_IND,node->symbol,code[0]?code[0]->res:0,code[1]?code[1]->res:0));
             break;
         case AST_CMD:
         case AST_CMD_BLOCK:
             result = code[0];
             break;
         case AST_FUNC_DEF_PARAM:
-			result = tacJoin(code[0],tacCreate(TAC_SYMBOL, node->symbol, 0, 0));
+			result = tacJoin(code[0],tacCreate(TAC_PARAM, node->symbol, 0, 0));
+            break;
+        case AST_FUNC_CALL:
+            result = tacJoin(code[0], tacCreate(TAC_CALL, makeTemp(), node->symbol, 0));
             break;
         case AST_WHEN:
             result = makeWhenThen(code[0],code[1]);
@@ -290,6 +309,20 @@ TAC* tacGenerate(AST* node) {
             break;
 		case AST_FOR:
             result = makeFor(code[0],code[1],code[2],node->symbol);
+            break;
+        case AST_READ:
+            result = tacCreate(TAC_READ, node->symbol,0,0);
+            break;
+        case AST_PRINT:
+            result = tacJoin(code[0], tacCreate(TAC_PRINT, 0,0,0));
+            break;
+        case AST_FUNC_CALL_PARAM_LIST:
+        case AST_FUNC_CALL_PARAM_LIST_REST:
+        case AST_PRINT_LIST:
+            result = tacJoin(tacJoin(code[0], tacCreate(TAC_ARG, code[0]? code[0]->res : 0, 0, 0)), code[1]);
+            break;
+        case AST_FUNC_DEF:
+            result = makeFuncDef(code[0],code[1],code[2],node->symbol);
             break;
         default:
             printf("caiu no default %d\n", node->type);
@@ -306,9 +339,8 @@ TAC* tacCreateOp(int type, TAC* op1, TAC* op2) {
 }
 
 TAC* makeWhenThen(TAC* code0, TAC* code1) {
-    TAC* iftac, *labeltac;
-    HASH_NODE* newlabel;
-    newlabel = makeLabel();
+    TAC *iftac, *labeltac;
+    HASH_NODE* newlabel = makeLabel();
     iftac = tacCreate(TAC_IFZ, newlabel,code0?code0->res:0,0);
     labeltac = tacCreate(TAC_LABEL, newlabel, 0,0);
     return tacJoin(tacJoin(tacJoin(code0,iftac),code1),labeltac);
@@ -353,4 +385,10 @@ TAC* makeFor(TAC* code0, TAC* code1, TAC* code2, HASH_NODE *symbol) {
 	addtac = tacCreate(TAC_ADD, symboltac->res, symboltac->res, hashInsert(SYMBOL_LIT_INTEGER,"1"));
     return tacJoin(tacJoin(tacJoin(tacJoin(tacJoin(tacJoin(tacJoin(tacJoin(tacJoin(tacJoin
 			(symboltac,code0),code1),movetac),labeltac2),comptac),iftac),code2),addtac),jumptac),labeltac);
+}
+TAC* makeFuncDef(TAC* type, TAC* params, TAC* cmdBlock, HASH_NODE *symbol) {
+    TAC* beginf = tacCreate(TAC_BEGIN_FUN, symbol, 0, 0);
+    TAC* endf = tacCreate(TAC_END_FUN, symbol, 0, 0);
+
+    return tacJoin(tacJoin(tacJoin(params, beginf), cmdBlock), endf);
 }
