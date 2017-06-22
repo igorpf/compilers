@@ -341,6 +341,9 @@ TAC* tacGenerate(AST* node) {
         case AST_INIT_VECTOR_DEF:
             result = tacJoin(code[0], tacJoin(code[2],tacCreate(TAC_VEC_DEC_INIT, node->symbol,code[1]?code[1]->res:0,0)));
             break;
+        case AST_VECTOR_ACCESS:
+            result = tacJoin(code[0], tacCreate(TAC_VEC_READ, makeTemp(),node->symbol,code[0]?code[0]->res:0));
+            break;
         default:
             printf("caiu no default %d\n", node->type);
             result = tacJoin(tacJoin(tacJoin(code[0],code[1]),code[2]),code[3]);
@@ -407,5 +410,5 @@ TAC* makeFuncDef(TAC* type, TAC* params, TAC* cmdBlock, HASH_NODE *symbol) {
     TAC* beginf = tacCreate(TAC_BEGIN_FUN, symbol, 0, 0);
     TAC* endf = tacCreate(TAC_END_FUN, symbol, 0, 0);
 
-    return tacJoin(tacJoin(tacJoin(params, beginf), cmdBlock), endf);
+    return tacJoin(tacJoin(tacJoin(tacJoin(type,params),beginf), cmdBlock), endf);
 }
