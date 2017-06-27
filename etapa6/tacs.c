@@ -412,3 +412,141 @@ TAC* makeFuncDef(TAC* type, TAC* params, TAC* cmdBlock, HASH_NODE *symbol) {
 
     return tacJoin(tacJoin(tacJoin(tacJoin(type,params),beginf), cmdBlock), endf);
 }
+void asmGen(TAC* first) {
+    FILE* fout = fopen("asm.s", "w");
+    TAC* tac;
+    for(tac = first; tac; tac=tac->next) {
+        fprintf(fout, "TAC(");
+        switch(tac->type) {
+            case TAC_SYMBOL:
+                //fprintf(fout, "TAC_SYMBOL");
+                break;
+            case TAC_ADD:
+                fprintf(fout, 
+                    "## TAC_ADD"
+                    "\tmovl _%s(%%rip), %%eax\n"
+                    "\taddl _%s(%%rip), %%eax\n"
+                    "\tmovl %%eax, _%s(%%rip)\n"
+                    , tac->op1->text, tac->op2->text, tac->res->text);
+                break;
+            case TAC_SUB:
+                fprintf(fout, "TAC_SUB");
+                break;
+            case TAC_MUL:
+                fprintf(fout, "TAC_MUL");
+                break;
+            case TAC_DIV:
+                fprintf(fout, "TAC_DIV");
+                break;
+            case TAC_GT:
+                fprintf(fout, "TAC_GT");
+                break;
+            case TAC_LT:
+                fprintf(fout, "TAC_LT");
+                break;
+            case TAC_GE:
+                fprintf(fout, "TAC_GE");
+                break;
+            case TAC_LE:
+                fprintf(fout, "TAC_LE");
+                break;
+            case TAC_EQ:
+                fprintf(fout, "TAC_EQ");
+                break;
+            case TAC_NE:
+                fprintf(fout, "TAC_NE");
+                break;
+            case TAC_AND:
+                fprintf(fout, "TAC_AND");
+                break;
+            case TAC_OR:
+                fprintf(fout, "TAC_OR");
+                break;
+            case TAC_IFZ:
+                fprintf(fout, "TAC_IFZ");
+                break;
+            case TAC_LABEL:
+                fprintf(fout, "TAC_LABEL");
+                break;
+            case TAC_UNKNOWN:
+                fprintf(fout, "TAC_UNKNOWN");
+                break;
+            case TAC_ARG:
+                fprintf(fout, "TAC_ARG");
+                break;
+            case TAC_VEC_READ:
+                fprintf(fout, "TAC_VEC_READ");
+                break;
+            case TAC_VEC_WRITE:
+                fprintf(fout, "TAC_VEC_WRITE");
+                break;
+            case TAC_CALL:
+                fprintf(fout, "TAC_CALL");
+                break;
+            case TAC_MOV:
+                fprintf(fout, "TAC_MOV");
+                break;
+            case TAC_RETURN:
+                fprintf(fout, "TAC_RETURN");
+                break;
+            case TAC_BEGIN_FUN:
+                fprintf(fout, "TAC_BEGIN_FUN");
+                break;
+            case TAC_END_FUN:
+                fprintf(fout, "TAC_END_FUN");
+                break;
+            case TAC_T_BYT:
+                fprintf(fout, "TAC_T_BYT");
+                break;
+            case TAC_T_SHO:
+                fprintf(fout, "TAC_T_SHO");
+                break;
+            case TAC_T_LON:
+                fprintf(fout, "TAC_T_LON");
+                break;
+            case TAC_T_FLO:
+                fprintf(fout, "TAC_T_FLO");
+                break;
+            case TAC_T_DOU:
+                fprintf(fout, "TAC_T_DOU");
+                break;
+            case TAC_JUMP:
+                fprintf(fout, "TAC_JUMP");
+                break;
+            case TAC_MOV_IND:
+                fprintf(fout, "TAC_MOV_IND");
+                break;
+            case TAC_PRINT:
+                fprintf(fout, "TAC_PRINT");
+                break;
+            case TAC_READ:
+                fprintf(fout, "TAC_READ");
+                break;
+            case TAC_PARAM:
+                fprintf(fout, "TAC_PARAM");
+                break;
+            case TAC_VAR_DEC:
+                fprintf(fout, "TAC_VAR_DEC");
+                break;
+            case TAC_VEC_DEC:
+                fprintf(fout, "TAC_VEC_DEC");
+                break;
+            case TAC_VEC_DEC_INIT:
+                fprintf(fout, "TAC_VEC_DEC_INIT");
+                break;
+        }
+        if(tac->res)
+            fprintf(fout, ", %s", tac->res->text);
+        else 
+            fprintf(fout, ",0");
+        if(tac->op1)
+            fprintf(fout, ", %s", tac->op1->text);
+        else 
+            fprintf(fout, ",0");
+        if(tac->op2)
+            fprintf(fout, ", %s", tac->op2->text);
+        else 
+            fprintf(fout, ",0");
+        printf(")\n");
+
+}

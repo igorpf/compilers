@@ -59,4 +59,5 @@ TAC* tacGenerate(AST* node);
 TAC* tacReverse(TAC* tac);
 void tacPrintForward(TAC* first);
 TAC* tacCreateOp(int type, TAC* op1, TAC* op2);
+void asmGen(TAC* first);
 #endif
