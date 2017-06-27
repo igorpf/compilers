@@ -1,0 +1,20 @@
+a: short 123;
+v: byte[2];
+z: byte[2] 1 2;
+long main(byte c, double d)
+  {
+  
+    print 1 2 main(1,2);
+    a = 123+13;
+    v#2 = v[10-1];
+    for (a = 1 to 10)
+        print "i" " ";
+    read a;
+    when(1>2) then
+        print "aaa" 
+        else a = a + 1;
+    a = main(1,2);
+    return 12345;
+    
+    a = main(1+2,12312/123);
+  };
