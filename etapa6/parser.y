@@ -83,7 +83,9 @@ start:	program   {astPrint(0, $$=$1);
                    hashCheckUndeclared();
                    checkUtilization($$);
                    checkDataTypes($$);
-                   tacPrintForward(tacReverse(tacGenerate($$)));
+                   TAC* t = tacReverse(tacGenerate($$));
+                   tacPrintForward(t);
+                   asmGen(t);
                   }
 	;
 program: 

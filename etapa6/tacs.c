@@ -209,7 +209,7 @@ void tacPrintForward(TAC* first) {
             fprintf(stderr, ", %s", tac->op2->text);
         else 
             fprintf(stderr, ",0");
-        printf(")\n");
+        fprintf(stderr,")\n");
     }
 }
 TAC* tacGenerate(AST* node) {
@@ -416,14 +416,16 @@ void asmGen(TAC* first) {
     FILE* fout = fopen("asm.s", "w");
     TAC* tac;
     for(tac = first; tac; tac=tac->next) {
-        fprintf(fout, "TAC(");
+        // fprintf(fout, "TAC(");
         switch(tac->type) {
             case TAC_SYMBOL:
-                //fprintf(fout, "TAC_SYMBOL");
+                fprintf(fout, 
+                    "## TAC_SYMBOL\n"
+                    "\t.comm  _%s,4,4\n", tac->res->text);
                 break;
             case TAC_ADD:
                 fprintf(fout, 
-                    "## TAC_ADD"
+                    "## TAC_ADD\n"
                     "\tmovl _%s(%%rip), %%eax\n"
                     "\taddl _%s(%%rip), %%eax\n"
                     "\tmovl %%eax, _%s(%%rip)\n"
@@ -466,7 +468,10 @@ void asmGen(TAC* first) {
                 fprintf(fout, "TAC_IFZ");
                 break;
             case TAC_LABEL:
-                fprintf(fout, "TAC_LABEL");
+                fprintf(fout, 
+                    "## TAC_LABEL\n"
+                    "%s:\n"
+                    , tac->res->text);
                 break;
             case TAC_UNKNOWN:
                 fprintf(fout, "TAC_UNKNOWN");
@@ -475,9 +480,25 @@ void asmGen(TAC* first) {
                 fprintf(fout, "TAC_ARG");
                 break;
             case TAC_VEC_READ:
-                fprintf(fout, "TAC_VEC_READ");
+                /*
+                return f[a] -> 
+                movl    a(%rip), %eax
+                movl    f(,%eax,4), %eax
+                */
+
+                fprintf(fout,
+                    "## TAC_VEC_READ\n"
+                    "\tmovl _%s(%%rip), %%eax \n"
+                    "\tmovl _%s(,%%eax,4), %%eax \n" //tem que ver esse 4 ali. teria que pegar o tipo da variável temporária
+                    "\tmovl %%eax, _%s(%%rip) \n"
+                    ,tac->op2->text,tac->op1->text,tac->res->text);
                 break;
             case TAC_VEC_WRITE:
+                /* Formato  para
+                    f[1] = a;
+                    movl    a(%rip), %eax   
+                    movl    %eax, f+4(%rip)  -> se fosse f[0] ficaria f(%rip)
+                */
                 fprintf(fout, "TAC_VEC_WRITE");
                 break;
             case TAC_CALL:
@@ -487,7 +508,11 @@ void asmGen(TAC* first) {
                 fprintf(fout, "TAC_MOV");
                 break;
             case TAC_RETURN:
-                fprintf(fout, "TAC_RETURN");
+            //o retorno da função sempre é guardado no %eax
+                fprintf(fout, 
+                    "## TAC_RETURN\n"
+                    "\tmovl  _%s(%%rip), %%eax"
+                    "\tret \n" , tac->res->text); 
                 break;
             case TAC_BEGIN_FUN:
                 fprintf(fout, "TAC_BEGIN_FUN");
@@ -535,18 +560,19 @@ void asmGen(TAC* first) {
                 fprintf(fout, "TAC_VEC_DEC_INIT");
                 break;
         }
-        if(tac->res)
-            fprintf(fout, ", %s", tac->res->text);
-        else 
-            fprintf(fout, ",0");
-        if(tac->op1)
-            fprintf(fout, ", %s", tac->op1->text);
-        else 
-            fprintf(fout, ",0");
-        if(tac->op2)
-            fprintf(fout, ", %s", tac->op2->text);
-        else 
-            fprintf(fout, ",0");
-        printf(")\n");
+        // if(tac->res)
+        //     fprintf(fout, ", %s", tac->res->text);
+        // else 
+        //     fprintf(fout, ",0");
+        // if(tac->op1)
+        //     fprintf(fout, ", %s", tac->op1->text);
+        // else 
+        //     fprintf(fout, ",0");
+        // if(tac->op2)
+        //     fprintf(fout, ", %s", tac->op2->text);
+        // else 
+        //     fprintf(fout, ",0");
+        fprintf(fout,"\n");
+    }
 
 }
