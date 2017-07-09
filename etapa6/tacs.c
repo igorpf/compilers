@@ -414,14 +414,17 @@ TAC* makeFuncDef(TAC* type, TAC* params, TAC* cmdBlock, HASH_NODE *symbol) {
 }
 void asmGen(TAC* first) {
     FILE* fout = fopen("asm.s", "w");
-    TAC* tac;
+    TAC *tac, *tacAux;
     for(tac = first; tac; tac=tac->next) {
         // fprintf(fout, "TAC(");
         switch(tac->type) {
             case TAC_SYMBOL:
                 fprintf(fout, 
-                    "## TAC_SYMBOL\n"
-                    "\t.comm  _%s,4,4\n", tac->res->text);
+                    "## TAC_SYMBOL\n");
+				if(tac->res->type > 3){
+                    fprintf(fout, "\t.comm  _%s,4,4\n", tac->res->text);
+					fprintf(fout, "\tmovl $%s, _%s(%%rip)\n", tac->res->text, tac->res->text);
+				}
                 break;
             case TAC_ADD:
                 fprintf(fout, 
@@ -465,7 +468,7 @@ void asmGen(TAC* first) {
                 fprintf(fout, "TAC_OR");
                 break;
             case TAC_IFZ:
-                fprintf(fout, "TAC_IFZ");
+                fprintf(fout, "##TAC_IFZ\n");
                 break;
             case TAC_LABEL:
                 fprintf(fout, 
@@ -474,10 +477,10 @@ void asmGen(TAC* first) {
                     , tac->res->text);
                 break;
             case TAC_UNKNOWN:
-                fprintf(fout, "TAC_UNKNOWN");
+                fprintf(fout, "##TAC_UNKNOWN\n");
                 break;
             case TAC_ARG:
-                fprintf(fout, "TAC_ARG");
+                fprintf(fout, "##TAC_ARG\n");
                 break;
             case TAC_VEC_READ:
                 /*
@@ -490,7 +493,7 @@ void asmGen(TAC* first) {
                     "## TAC_VEC_READ\n"
                     "\tmovl _%s(%%rip), %%eax \n"
                     "\tmovl _%s(,%%eax,4), %%eax \n" //tem que ver esse 4 ali. teria que pegar o tipo da variável temporária
-                    "\tmovl %%eax, _%s(%%rip) \n"
+                    "\tmovl %%eax, _%s(%%rip) \n"	// 
                     ,tac->op2->text,tac->op1->text,tac->res->text);
                 break;
             case TAC_VEC_WRITE:
@@ -499,28 +502,46 @@ void asmGen(TAC* first) {
                     movl    a(%rip), %eax   
                     movl    %eax, f+4(%rip)  -> se fosse f[0] ficaria f(%rip)
                 */
-                fprintf(fout, "TAC_VEC_WRITE");
+                fprintf(fout, "##TAC_VEC_WRITE\n");
                 break;
             case TAC_CALL:
-                fprintf(fout, "TAC_CALL");
+                fprintf(fout, "##TAC_CALL\n");
                 break;
             case TAC_MOV:
-                fprintf(fout, "TAC_MOV");
+                fprintf(fout, "##TAC_MOV\n");
                 break;
             case TAC_RETURN:
             //o retorno da função sempre é guardado no %eax
+				for(tacAux = tac; tacAux->type != TAC_END_FUN; tacAux = tacAux->next)
+					;
                 fprintf(fout, 
                     "## TAC_RETURN\n"
-                    "\tmovl  _%s(%%rip), %%eax"
-                    "\tret \n" , tac->res->text); 
+                    "\tmovl  _%s(%%rip), %%eax\n" , tac->res->text);
+				if(strcmp(tacAux->res->text, "main"))
+					fprintf(fout, "\tpopq	 %%rbp\n");
+		
+				fprintf(fout,
+					"\tleave\n"
+                   	"\tret \n"); 
                 break;
             case TAC_BEGIN_FUN:
-                fprintf(fout, "TAC_BEGIN_FUN");
+                fprintf(fout, 
+					"##TAC_BEGIN_FUN\n"
+					"\t.globl _%s\n"
+					"_%s:\n"
+					"\t.cfi_startproc\n"
+					"\tpushq	%%rbp\n"
+					"\tmovq	%%rsp, %%rbp\n", tac->res->text, tac->res->text);
                 break;
             case TAC_END_FUN:
-                fprintf(fout, "TAC_END_FUN");
+				if(strcmp(tac->res->text, "main"))
+					fprintf(fout, "\tpopq	 %%rbp\n");
+				fprintf(fout,
+					"\tleave\n"
+                    "\tret \n"
+					"\t.cfi_endproc\n");
                 break;
-            case TAC_T_BYT:
+            /*case TAC_T_BYT:
                 fprintf(fout, "TAC_T_BYT");
                 break;
             case TAC_T_SHO:
@@ -534,30 +555,47 @@ void asmGen(TAC* first) {
                 break;
             case TAC_T_DOU:
                 fprintf(fout, "TAC_T_DOU");
-                break;
+                break;*/
             case TAC_JUMP:
-                fprintf(fout, "TAC_JUMP");
+                fprintf(fout, "##TAC_JUMP\n");
                 break;
             case TAC_MOV_IND:
-                fprintf(fout, "TAC_MOV_IND");
+                fprintf(fout, "##TAC_MOV_IND\n");
                 break;
             case TAC_PRINT:
-                fprintf(fout, "TAC_PRINT");
+                fprintf(fout, "##TAC_PRINT\n");
                 break;
             case TAC_READ:
-                fprintf(fout, "TAC_READ");
+                fprintf(fout, "##TAC_READ\n");
                 break;
             case TAC_PARAM:
-                fprintf(fout, "TAC_PARAM");
+                //fprintf(fout, "##TAC_PARAM\n");
                 break;
             case TAC_VAR_DEC:
-                fprintf(fout, "TAC_VAR_DEC");
+                fprintf(fout, 
+					"##TAC_VAR_DEC\n"
+					"\t.globl \t_%s\n"
+					"_%s:\n"
+					"\t.long \t%s\n", tac->res->text, tac->res->text, tac->op1->text);
                 break;
             case TAC_VEC_DEC:
-                fprintf(fout, "TAC_VEC_DEC");
+                fprintf(fout, 
+					"##TAC_VEC_DEC\n"
+					"\t.comm _%s,%d,4\n", tac->res->text, atoi(tac->op1->text)*4);
                 break;
             case TAC_VEC_DEC_INIT:
-                fprintf(fout, "TAC_VEC_DEC_INIT");
+                fprintf(fout, 
+					"##TAC_VEC_DEC_INIT\n"
+					"\t.globl \t_%s\n"
+					"_%s:\n", tac->res->text, tac->res->text);
+				
+				for(tacAux = tac->prev; tacAux->prev->type == TAC_SYMBOL; tacAux = tacAux->prev)
+					;
+				while(tacAux->type != TAC_VEC_DEC_INIT)
+				{
+					fprintf(fout, "\t.long \t%s\n", tacAux->res->text);
+					tacAux = tacAux->next;
+				}
                 break;
         }
         // if(tac->res)
@@ -572,7 +610,7 @@ void asmGen(TAC* first) {
         //     fprintf(fout, ", %s", tac->op2->text);
         // else 
         //     fprintf(fout, ",0");
-        fprintf(fout,"\n");
+        //fprintf(fout,"\n");
     }
 
 }

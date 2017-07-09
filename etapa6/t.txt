@@ -1,0 +1,12 @@
+a: long 5;
+v: byte[2];
+z: byte[2] 1 232;
+long main(byte c, double d)
+  {
+
+    a = z[1];
+
+    return a+a;
+    
+
+  };
