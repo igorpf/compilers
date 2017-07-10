@@ -2,6 +2,7 @@
 #include "hash.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 TAC* makeWhenThen(TAC* code0, TAC* code1);
 TAC* makeWhenThenElse(TAC* code0, TAC* code1, TAC* code2);
@@ -508,7 +509,11 @@ void asmGen(TAC* first) {
                 fprintf(fout, "##TAC_CALL\n");
                 break;
             case TAC_MOV:
-                fprintf(fout, "##TAC_MOV\n");
+                fprintf(fout,
+                    "## TAC_MOV\n"
+                    "\tmovl _%s(%%rip), %%eax \n"
+                    "\tmovl %%eax, _%s(%%rip) \n" 
+                    ,tac->res->text,tac->op1->text);
                 break;
             case TAC_RETURN:
             //o retorno da função sempre é guardado no %eax
