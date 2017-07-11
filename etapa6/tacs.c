@@ -392,8 +392,8 @@ TAC* makeWhile(TAC* code0, TAC* code1) {
 }
 
 TAC* makeFor(TAC* code0, TAC* code1, TAC* code2, HASH_NODE *symbol) {
-    TAC *iftac, *jumptac, *comptac, *labeltac, *labeltac2, *movetac, *symboltac, *addtac;
-    HASH_NODE *newlabel, *newlabel2;
+    TAC *iftac, *jumptac, *comptac, *labeltac, *labeltac2, *movetac, *movetac2,*symboltac, *addtac;
+    HASH_NODE *newlabel, *newlabel2, *addTemp = makeTemp();
     newlabel = makeLabel();
 	newlabel2 = makeLabel();
 	symboltac = tacCreate(TAC_SYMBOL, symbol,0,0);
@@ -403,9 +403,10 @@ TAC* makeFor(TAC* code0, TAC* code1, TAC* code2, HASH_NODE *symbol) {
     labeltac = tacCreate(TAC_LABEL, newlabel, 0,0);
 	labeltac2 = tacCreate(TAC_LABEL, newlabel2, 0,0);
 	movetac = tacCreate(TAC_MOV, symboltac->res, code0?code0->res:0, 0);
-	addtac = tacCreate(TAC_ADD, symboltac->res, symboltac->res, hashInsert(SYMBOL_LIT_INTEGER,"1"));
-    return tacJoin(tacJoin(tacJoin(tacJoin(tacJoin(tacJoin(tacJoin(tacJoin(tacJoin(tacJoin
-			(symboltac,code0),code1),movetac),labeltac2),comptac),iftac),code2),addtac),jumptac),labeltac);
+    movetac2 = tacCreate(TAC_MOV, symboltac->res, addTemp, 0);
+	addtac = tacCreate(TAC_ADD, addTemp, symboltac->res, hashInsert(SYMBOL_LIT_INTEGER,"1"));
+    return tacJoin(tacJoin(tacJoin(tacJoin(tacJoin(tacJoin(tacJoin(tacJoin(tacJoin(tacJoin(tacJoin
+			(symboltac,code0),code1),movetac),labeltac2),comptac),iftac),code2),addtac),movetac2),jumptac),labeltac);
 }
 TAC* makeFuncDef(TAC* type, TAC* params, TAC* cmdBlock, HASH_NODE *symbol) {
     TAC* beginf = tacCreate(TAC_BEGIN_FUN, symbol, 0, 0);
@@ -474,28 +475,28 @@ void asmGen(TAC* first) {
                     , tac->res->text, tac->op1->text, tac->op2->text, tac->res->text);
                 break;
             case TAC_GT:
-                fprintf(fout, "TAC_GT");
+                fprintf(fout, "##TAC_GT");
                 break;
             case TAC_LT:
-                fprintf(fout, "TAC_LT");
+                fprintf(fout, "##TAC_LT");
                 break;
             case TAC_GE:
-                fprintf(fout, "TAC_GE");
+                fprintf(fout, "##TAC_GE");
                 break;
             case TAC_LE:
-                fprintf(fout, "TAC_LE");
+                fprintf(fout, "##TAC_LE");
                 break;
             case TAC_EQ:
-                fprintf(fout, "TAC_EQ");
+                fprintf(fout, "##TAC_EQ");
                 break;
             case TAC_NE:
-                fprintf(fout, "TAC_NE");
+                fprintf(fout, "##TAC_NE");
                 break;
             case TAC_AND:
-                fprintf(fout, "TAC_AND");
+                fprintf(fout, "##TAC_AND");
                 break;
             case TAC_OR:
-                fprintf(fout, "TAC_OR");
+                fprintf(fout, "##TAC_OR");
                 break;
             case TAC_IFZ:
                 fprintf(fout, "##TAC_IFZ\n");
@@ -604,9 +605,12 @@ void asmGen(TAC* first) {
                 break;  
             case TAC_PRINT:
 				if(tac->res->type != 7){
+
 					fprintf(fout, 
-							"##TAC_PRINT\n"
-							"\t.comm _%s,4,4\n", tac->res->text);
+							"##TAC_PRINT\n");
+                    if(tac->res->type != 1)
+                        fprintf(fout,
+							"\t.comm _%s,4,4 ##%d\n", tac->res->text, tac->res->type);
 					if(tac->res->type > 3 && tac->res->type < 7)
 						fprintf(fout, "\tmovl $%s, _%s(%%rip)\n", tac->res->text, tac->res->text);
 					fprintf(fout, 
