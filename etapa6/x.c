@@ -1,7 +1,9 @@
-#include <stdio.h>
+	int x=3, y, z;
 
-int x = 3;
+int main()
+{
 
-int main(){
-   return x + 1;
+
+	z = y - x;
+
 }

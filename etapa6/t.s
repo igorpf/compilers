@@ -41,7 +41,7 @@ f:
 	.size	f, .-f
 	.section	.rodata
 .LC0:
-	.string	"12"
+	.string	"dfgdsgd"
 .LC1:
 	.string	" %d"
 	.text

@@ -35,7 +35,7 @@
 #define TAC_T_DOU    29 
 #define TAC_FUNC_DEF_PARAM 30 
 #define TAC_JUMP     31
-#define TAC_MOV_IND  32
+//#define TAC_MOV_IND  32
 #define TAC_PRINT    33
 #define TAC_READ     34
 #define TAC_PARAM    35
@@ -43,6 +43,7 @@
 #define TAC_VEC_DEC  37
 #define TAC_VEC_DEC_INIT  38
 
+#define MAX_STRINGS  100
 
 typedef struct tac_struct {
     int type;

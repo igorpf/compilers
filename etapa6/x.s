@@ -6,6 +6,8 @@
 	.size	x, 4
 x:
 	.long	3
+	.comm	y,4,4
+	.comm	z,4,4
 	.text
 	.globl	main
 	.type	main, @function
@@ -17,8 +19,11 @@ main:
 	.cfi_offset 6, -16
 	movq	%rsp, %rbp
 	.cfi_def_cfa_register 6
+	movl	y(%rip), %edx
 	movl	x(%rip), %eax
-	addl	$1, %eax
+	subl	%eax, %edx
+	movl	%edx, %eax
+	movl	%eax, z(%rip)
 	popq	%rbp
 	.cfi_def_cfa 7, 8
 	ret
