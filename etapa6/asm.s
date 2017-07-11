@@ -60,29 +60,20 @@ main:
 	movl ___TEMPORARY0__(%rip), %eax 
 	movl %eax, _a(%rip) 
 ## TAC_SYMBOL
-	.comm _2,4,4
-	movl $2, _2(%rip)
+	.comm _0,4,4
+	movl $0, _0(%rip)
 ## TAC_SYMBOL
-	.comm _10,4,4
-	movl $10, _10(%rip)
-## TAC_SYMBOL
-	.comm _1,4,4
-	movl $1, _1(%rip)
-## TAC_SUB
-	.comm ___TEMPORARY1__,4,4
-	movl _10(%rip), %edx
-	movl _1(%rip), %eax
-	subl %eax, %edx
-	movl %edx, %eax
-	movl %eax, ___TEMPORARY1__(%rip)
-## TAC_VEC_READ
-	.comm ___TEMPORARY2__,4,4
-	movl ___TEMPORARY1__(%rip), %eax 
-	movl _v(,%eax,4), %eax 
-	movl %eax, ___TEMPORARY2__(%rip) 
+	.comm _60,4,4
+	movl $60, _60(%rip)
 ##TAC_VEC_WRITE
-	movl ___TEMPORARY2__(%rip), %eax 
-	movl %eax, _v+8(%rip)
+	movl _60(%rip), %eax 
+	movl %eax, _v+0(%rip)
+##TAC_READ
+	movl $_a, %edi
+	call gets
+	movl $_a, %edi
+	call atoi
+	movl %eax, _a(%rip)
 ## TAC_SYMBOL
 ##TAC_PRINT
 	movl	_a(%rip), %esi
@@ -92,12 +83,12 @@ main:
 ## TAC_SYMBOL
 ## TAC_SYMBOL
 ## TAC_ADD
-	.comm ___TEMPORARY3__,4,4
+	.comm ___TEMPORARY1__,4,4
 	movl _a(%rip), %eax
 	addl _a(%rip), %eax
-	movl %eax, ___TEMPORARY3__(%rip)
+	movl %eax, ___TEMPORARY1__(%rip)
 ## TAC_RETURN
-	movl ___TEMPORARY3__(%rip), %eax
+	movl ___TEMPORARY1__(%rip), %eax
 	leave
 	ret 
 ##TAC_END_FUN

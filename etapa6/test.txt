@@ -6,12 +6,14 @@ long main(byte c, double d)
   
     print 1 2;
     a = 123+13;
-    v#2 = v[10-1];
+    v#0 = 60;
+    //print a v[0];
+    read a;
     print a;
     /*
     for (a = 1 to 10)
         print "i" " ";
-    read a;
+    
     when(1>2) then
         print "aaa" 
         else a = a + 1;

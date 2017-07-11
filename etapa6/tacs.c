@@ -630,7 +630,16 @@ void asmGen(TAC* first) {
 				}
                 break;
             case TAC_READ:
-                fprintf(fout, "##TAC_READ\n");
+                fprintf(fout, 
+                    "##TAC_READ\n"
+                    "\tmovl $_%s, %%edi\n"
+                    "\tcall gets\n"
+                    "\tmovl $_%s, %%edi\n"
+                    "\tcall atoi\n"
+                    "\tmovl %%eax, _%s(%%rip)\n", 
+                    tac->res->text,
+                    tac->res->text,
+                    tac->res->text);
                 break;
             case TAC_PARAM:
                 fprintf(fout, "##TAC_PARAM\n");
@@ -664,19 +673,6 @@ void asmGen(TAC* first) {
 				}
                 break;
         }
-        // if(tac->res)
-        //     fprintf(fout, ", %s", tac->res->text);
-        // else 
-        //     fprintf(fout, ",0");
-        // if(tac->op1)
-        //     fprintf(fout, ", %s", tac->op1->text);
-        // else 
-        //     fprintf(fout, ",0");
-        // if(tac->op2)
-        //     fprintf(fout, ", %s", tac->op2->text);
-        // else 
-        //     fprintf(fout, ",0");
-        //fprintf(fout,"\n");
     }
 
 	fprintf(fout, 	".LC0:\n"
