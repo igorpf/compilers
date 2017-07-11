@@ -42,7 +42,7 @@
 #define TAC_VAR_DEC  36
 #define TAC_VEC_DEC  37
 #define TAC_VEC_DEC_INIT  38
-
+#define TAC_IF  39
 #define MAX_STRINGS  100
 
 typedef struct tac_struct {

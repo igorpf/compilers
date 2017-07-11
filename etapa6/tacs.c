@@ -128,6 +128,9 @@ void tacPrintForward(TAC* first) {
             case TAC_IFZ:
                 fprintf(stderr, "TAC_IFZ");
                 break;
+            case TAC_IF:
+                fprintf(stderr, "TAC_IF");
+                break;
             case TAC_LABEL:
                 fprintf(stderr, "TAC_LABEL");
                 break;
@@ -362,7 +365,7 @@ TAC* tacCreateOp(int type, TAC* op1, TAC* op2) {
 TAC* makeWhenThen(TAC* code0, TAC* code1) {
     TAC *iftac, *labeltac;
     HASH_NODE* newlabel = makeLabel();
-    iftac = tacCreate(TAC_IFZ, newlabel,code0?code0->res:0,0);
+    iftac = tacCreate(TAC_IF, newlabel,code0?code0->res:0,0);
     labeltac = tacCreate(TAC_LABEL, newlabel, 0,0);
     return tacJoin(tacJoin(tacJoin(code0,iftac),code1),labeltac);
 }
@@ -372,7 +375,7 @@ TAC* makeWhenThenElse(TAC* code0, TAC* code1, TAC* code2) {
     HASH_NODE *newlabel, *newlabel2;
     newlabel = makeLabel();
 	newlabel2 = makeLabel();
-    iftac = tacCreate(TAC_IFZ, newlabel,code0?code0->res:0,0);
+    iftac = tacCreate(TAC_IF, newlabel,code0?code0->res:0,0);
 	labeltac = tacCreate(TAC_LABEL, newlabel, 0,0);
 	jumptac = tacCreate(TAC_JUMP, newlabel2, 0, 0);
 	labeltac2 = tacCreate(TAC_LABEL, newlabel2, 0,0);
@@ -384,7 +387,7 @@ TAC* makeWhile(TAC* code0, TAC* code1) {
     HASH_NODE *newlabel, *newlabel2;
     newlabel = makeLabel();
 	newlabel2 = makeLabel();
-    iftac = tacCreate(TAC_IFZ, newlabel,code0?code0->res:0,0);
+    iftac = tacCreate(TAC_IF, newlabel,code0?code0->res:0,0);
 	labeltac = tacCreate(TAC_LABEL, newlabel, 0,0);
 	jumptac = tacCreate(TAC_JUMP, newlabel2, 0, 0);
 	labeltac2 = tacCreate(TAC_LABEL, newlabel2, 0,0);
@@ -418,7 +421,7 @@ void asmGen(TAC* first) {
     FILE* fout = fopen("asm.s", "w");
     TAC *tac, *tacAux;
 	char *strings[MAX_STRINGS];
-	int i;
+	int i, j=0;
 
 	for(i = 0; i < MAX_STRINGS; i++)
 		strings[i] = 0;
@@ -475,22 +478,87 @@ void asmGen(TAC* first) {
                     , tac->res->text, tac->op1->text, tac->op2->text, tac->res->text);
                 break;
             case TAC_GT:
-                fprintf(fout, "##TAC_GT");
+                // fprintf(fout, "##TAC_GT");
+                fprintf(fout, 
+                    "##TAC_GT\n"
+                    "\t.comm _%s,4,4\n"
+                    "\tmovl _%s(%%rip), %%eax\n"
+                    "\tcmp %%eax, _%s(%%rip)\n"
+                    "\tjg HUE%d\n"
+                    "\tmovl $0, _%s(%%rip)\n"
+                    "\tjmp FIMHUE%d\n"
+                    "HUE%d:\n\tmovl $1, _%s(%%rip)\n"
+                    "FIMHUE%d:\n ", tac->res->text,tac->op1->text,tac->op2->text,j,tac->res->text,j,j,tac->res->text,j);
+                j++;
+                break;
                 break;
             case TAC_LT:
-                fprintf(fout, "##TAC_LT");
+                // fprintf(fout, "##TAC_LT");
+                fprintf(fout, 
+                    "##TAC_LT\n"
+                    "\t.comm _%s,4,4\n"
+                    "\tmovl _%s(%%rip), %%eax\n"
+                    "\tcmp %%eax, _%s(%%rip)\n"
+                    "\tjl HUE%d\n"
+                    "\tmovl $0, _%s(%%rip)\n"
+                    "\tjmp FIMHUE%d\n"
+                    "HUE%d:\n\tmovl $1, _%s(%%rip)\n"
+                    "FIMHUE%d:\n ", tac->res->text,tac->op1->text,tac->op2->text,j,tac->res->text,j,j,tac->res->text,j);
+                j++;
                 break;
             case TAC_GE:
-                fprintf(fout, "##TAC_GE");
+                // fprintf(fout, "##TAC_GE");
+                fprintf(fout, 
+                    "##TAC_GE\n"
+                    "\t.comm _%s,4,4\n"
+                    "\tmovl _%s(%%rip), %%eax\n"
+                    "\tcmp %%eax, _%s(%%rip)\n"
+                    "\tjge HUE%d\n"
+                    "\tmovl $0, _%s(%%rip)\n"
+                    "\tjmp FIMHUE%d\n"
+                    "HUE%d:\n\tmovl $1, _%s(%%rip)\n"
+                    "FIMHUE%d:\n ", tac->res->text,tac->op1->text,tac->op2->text,j,tac->res->text,j,j,tac->res->text,j);
+                j++;
                 break;
             case TAC_LE:
-                fprintf(fout, "##TAC_LE");
+                fprintf(fout, 
+                    "##TAC_LE\n"
+                    "\t.comm _%s,4,4\n"
+                    "\tmovl _%s(%%rip), %%eax\n"
+                    "\tcmp %%eax, _%s(%%rip)\n"
+                    "\tjle HUE%d\n"
+                    "\tmovl $0, _%s(%%rip)\n"
+                    "\tjmp FIMHUE%d\n"
+                    "HUE%d:\n\tmovl $1, _%s(%%rip)\n"
+                    "FIMHUE%d:\n ", tac->res->text,tac->op1->text,tac->op2->text,j,tac->res->text,j,j,tac->res->text,j);
+                j++;
                 break;
             case TAC_EQ:
-                fprintf(fout, "##TAC_EQ");
+                fprintf(fout, 
+                    "##TAC_EQ\n"
+                    "\t.comm _%s,4,4\n"
+                    "\tmovl _%s(%%rip), %%eax\n"
+                    "\tcmp %%eax, _%s(%%rip)\n"
+                    "\tje HUE%d\n"
+                    "\tmovl $1, _%s(%%rip)\n"
+                    "\tjmp FIMHUE%d\n"
+                    "HUE%d:\n\tmovl $0, _%s(%%rip)\n"
+                    "FIMHUE%d:\n ", tac->res->text,tac->op1->text,tac->op2->text,j,tac->res->text,j,j,tac->res->text,j);
+                j++;
                 break;
             case TAC_NE:
-                fprintf(fout, "##TAC_NE");
+                // fprintf(fout, "##TAC_NE");
+                fprintf(fout, 
+                    "##TAC_NE\n"
+                    "\t.comm _%s,4,4\n"
+                    "\tmovl _%s(%%rip), %%eax\n"
+                    "\tcmp %%eax, _%s(%%rip)\n"
+                    "\tjne HUE%d\n"
+                    "\tmovl $1, _%s(%%rip)\n"
+                    "\tjmp FIMHUE%d\n"
+                    "HUE%d:\n\tmovl $0, _%s(%%rip)\n"
+                    "FIMHUE%d:\n ", tac->res->text,tac->op1->text,tac->op2->text,j,tac->res->text,j,j,tac->res->text,j);
+                j++;
                 break;
             case TAC_AND:
                 fprintf(fout, "##TAC_AND");
@@ -499,7 +567,18 @@ void asmGen(TAC* first) {
                 fprintf(fout, "##TAC_OR");
                 break;
             case TAC_IFZ:
-                fprintf(fout, "##TAC_IFZ\n");
+                fprintf(fout, 
+                    "##TAC_IFZ\n"
+                    "\tmovl _%s(%%rip), %%eax\n"
+                    
+                    "\tjz %s\n",tac->op1->text, tac->res->text);
+                break;
+            case TAC_IF:
+                fprintf(fout, 
+                    "##TAC_IF\n"
+                    "\tmovl _%s(%%rip), %%eax\n"                    
+                    "\tandl %%eax,%%eax\n"
+                    "\tjnz %s\n",tac->op1->text, tac->res->text);
                 break;
             case TAC_LABEL:
                 fprintf(fout, 
@@ -507,12 +586,6 @@ void asmGen(TAC* first) {
                     "%s:\n"
                     , tac->res->text);
                 break;
-            /*case TAC_UNKNOWN:
-                fprintf(fout, "##TAC_UNKNOWN\n");
-                break;
-            case TAC_ARG:
-                fprintf(fout, "##TAC_ARG\n");
-                break;*/
             case TAC_VEC_READ:
                 /*
                 return f[a] -> 
@@ -601,7 +674,9 @@ void asmGen(TAC* first) {
                 fprintf(fout, "##TAC_MOV_IND\n");
                 break;*/
             case TAC_JUMP:
-                fprintf(fout, "##TAC_JUMP\n");
+                fprintf(fout, 
+                    "##TAC_JUMP\n"
+                    "\tjmp %s", tac->res->text);
                 break;  
             case TAC_PRINT:
 				if(tac->res->type != 7){
@@ -642,7 +717,9 @@ void asmGen(TAC* first) {
                     tac->res->text);
                 break;
             case TAC_PARAM:
-                fprintf(fout, "##TAC_PARAM\n");
+                fprintf(fout, 
+                    "##TAC_PARAM\n"
+                    "\t.comm _%s,4,4\n", tac->res->text);
                 break;
             case TAC_VAR_DEC:
                 fprintf(fout, 
@@ -676,7 +753,7 @@ void asmGen(TAC* first) {
     }
 
 	fprintf(fout, 	".LC0:\n"
-		"\t.string \"%%d\\n\"\n");
+		"\t.string \"%%d\"\n");
 	for(i = 0; strings[i]; i++){
 		fprintf(fout, 	".LC%d:\n"
 			"\t.string %s\n"

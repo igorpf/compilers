@@ -4,21 +4,28 @@ z: byte[2] 1 2;
 long main(byte c, double d)
   {
   
-    print 1 2;
+    print 1 2 "\n";
     a = 123+13;
     v#0 = 60;
-    //print a v[0];
-    read a;
-    print a;
-    /*
-    for (a = 1 to 10)
-        print "i" " ";
+    print a "\n" v[0] "\n";
+    //read a;
+    //print a "\n";
     
-    when(1>2) then
-        print "aaa" 
-        else a = a + 1;
+    for (a = 1 to 10)
+        print a "!";
+    
+    when(1!=2) then
+        print "\naaa" 
+        else print "\nBBB";
+    while (a > 1){
+     a = a-1;
+     print a ;
+    };
         
-    a = main(1,2);    
+    
+    
+    //a = main(1,2);    
+    /*
     a = main(1+2,12312/123);
 
     */
