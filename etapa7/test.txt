@@ -1,0 +1,39 @@
+a: short 123;
+v: byte[2];
+soma: short 0;
+z: byte[5] 10 20 30 40 50;
+long func(){
+    print "\n\nae\n\n";
+};
+long main(byte c, double d)
+  {
+  
+    print 1 2 "\n";
+    a = 123+13;
+    v#0 = 60;
+    print "V: " v[0];
+    print "Digite um numero: \n";
+    read a;
+    print "Voce digitou " a "\n";
+    
+    for (a = 0 to 5){
+        print "Vetor indice " a " eh " z[a] " !\n";
+        soma = soma + z[a];
+    };
+
+    print "Soma deu: " soma;
+    
+    when(1==2) then
+        print "\naaa\n" 
+        else print "\nBBB\n";
+
+    while (a > 1){
+     a = a-1;
+     print "Decrementando a: " a "\n";
+    };
+        
+    
+    
+    a = func();
+    return a+a;
+  };

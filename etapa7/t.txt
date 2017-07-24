@@ -1,0 +1,9 @@
+x: long 6;
+a: long 3;
+b: long 10;
+long main()
+  {
+	x = (a+b)*(a-b);
+	b = (a + b) + (a - b);
+  };
+
