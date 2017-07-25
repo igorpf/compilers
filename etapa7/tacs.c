@@ -432,9 +432,10 @@ void asmGen(TAC* first) {
         switch(tac->type) {
             case TAC_SYMBOL:
                 fprintf(fout, "## TAC_SYMBOL\n");
-				if(tac->res->type > 3 && tac->res->type < 7){
+				if(tac->res->type > 3 && tac->res->type < 7 || tac->res->type == 8){
                     fprintf(fout, "\t.comm _%s,4,4\n", tac->res->text);
-					fprintf(fout, "\tmovl $%s, _%s(%%rip)\n", tac->res->text, tac->res->text);
+					if(tac->res->type > 3 && tac->res->type < 7)
+						fprintf(fout, "\tmovl $%s, _%s(%%rip)\n", tac->res->text, tac->res->text);
 				}
                 break;
             case TAC_ADD:
@@ -849,25 +850,38 @@ TAC* tacOptimization(TAC *tac){
 	TAC *tacs = NULL;
 
 	for(; list; list = list->prev){
+		
+			
 		if(!tacs){
 			tacs = tacCopy(tacFind(tac, list->gad));
 			tacs->next = NULL;
 			tacs->prev = NULL;
 		}
 		else{
+			if(list->gad->type != TAC_SYMBOL){
+				tacs->next = tacCreate(TAC_SYMBOL, list->gad->real->symbols[0], 0, 0);
+				tacs->next->prev = tacs;
+				tacs->next->next = NULL;
+				tacs = tacs->next;
+			}
 			tacs->next = tacCopy(tacFind(tac, list->gad));
 			tacs->next->prev = tacs;
 			tacs->next->next = NULL;
 			tacs = tacs->next;
 		}
-		if(list->gad->type != TAC_SYMBOL && list->gad->type != TAC_MOV)
+		
 			for(i = 1; i < 100; i++)
 				if(list->gad->real->symbols[i]){
+					tacs->next = tacCreate(TAC_SYMBOL, list->gad->real->symbols[i], 0, 0);
+					tacs->next->prev = tacs;
+					tacs->next->next = NULL;
+					tacs = tacs->next;
 					tacs->next = tacCreate(TAC_MOV, list->gad->real->symbols[i], list->gad->real->symbols[0], 0);
 					tacs->next->prev = tacs;
 					tacs->next->next = NULL;
 					tacs = tacs->next;
 				}
+		
 	}
 	for(; tacs->prev; tacs = tacs->prev);
 
@@ -875,7 +889,10 @@ TAC* tacOptimization(TAC *tac){
 	tacAux3 = tacCopy(tac);
 	
 	for(; tacAux2->type != TAC_BEGIN_FUN; tacAux2 = tacAux2->next);
-	for(; tacAux3->type != TAC_END_FUN; tacAux3 = tacAux3->next);
+	for(; tacAux3->type != TAC_BEGIN_FUN; tacAux3 = tacAux3->next);
+	tacAux3 = tacAux3->next;
+	for(; tacAux3->type == TAC_ADD || tacAux3->type == TAC_SUB || tacAux3->type == TAC_MUL || tacAux3->type == TAC_DIV ||
+		tacAux3->type == TAC_MOV ||	tacAux3->type == TAC_SYMBOL; tacAux3 = tacAux3->next);
 	tacAux2->next = tacs;
 	
 	for(; tacs->next; tacs = tacs->next);

@@ -8,6 +8,8 @@ long main()
 
 	x = (a + b) + (a - b);
 	b = (a + b) + (a - b);
+
+	print b "\n";
   };
 
 long foo(){};
