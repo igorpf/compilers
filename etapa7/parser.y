@@ -85,8 +85,8 @@ start:	program   {astPrint(0, $$=$1);
                    checkDataTypes($$);
                    TAC* t = tacReverse(tacGenerate($$));
                    tacPrintForward(t);
-                   //TAC* ot = tacOptimization(t);
-                   //tacPrintForward(ot);
+                   TAC* ot = tacOptimization(t);
+                   tacPrintForward(ot);
                    asmGen(t);
                   }
 	;

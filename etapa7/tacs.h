@@ -57,6 +57,8 @@ typedef struct tac_struct {
 
 typedef struct GAD_struct{
 	int type;
+	int number;
+	int flag;
 	HASH_NODE *symbols[MAX_SYMBOLS];
 	HASH_NODE *op1;
 	HASH_NODE *op2;
@@ -64,8 +66,14 @@ typedef struct GAD_struct{
 	struct GAD_struct *prev;
 	struct GAD_struct *son1;
 	struct GAD_struct *son2;
-	int number;
+	struct GAD_struct *real;
 }GAD;
+
+typedef struct L_struct{
+	GAD *gad;
+	struct L_struct *next;
+	struct L_struct *prev;
+}L;
 
 TAC* tacCreate(int type, HASH_NODE* res, HASH_NODE* op1, HASH_NODE* op2);
 TAC* tacJoin(TAC* l1,TAC* l2);
@@ -81,4 +89,8 @@ void gadPrint(GAD *gad, int level);
 GAD* gadFind(HASH_NODE *hn, GAD *gad);
 GAD *gadFindOp(TAC *tac, GAD *gad);
 GAD *addSymbol(GAD *gad, HASH_NODE *symbol);
+L* insert(GAD *gad, L *first);
+GAD *gadCopy(GAD *gad);
+TAC *tacCopy(TAC *tac);
+TAC *tacFind(TAC *tac, GAD *gad);
 #endif

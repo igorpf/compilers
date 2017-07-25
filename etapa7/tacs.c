@@ -9,6 +9,7 @@ TAC* makeWhenThenElse(TAC* code0, TAC* code1, TAC* code2);
 TAC* makeWhile(TAC* code0, TAC* code1);
 TAC* makeFor(TAC* code0, TAC* code1, TAC* code2, HASH_NODE *symbol);
 TAC* makeFuncDef(TAC* type, TAC* params, TAC* cmdBlock, HASH_NODE *symbol);
+int flags[1000];
 
 TAC* tacCreate(int type, HASH_NODE* res, HASH_NODE* op1, HASH_NODE* op2) {
     TAC* newTac;
@@ -760,9 +761,12 @@ void asmGen(TAC* first) {
 }
 
 TAC* tacOptimization(TAC *tac){
-	int nodeNumber = 0;
-	TAC *tacAux;
-	GAD *gadAux = NULL, *newGAD, *g;
+	int nodeNumber = 0, i, flag = 0, flag2;
+	for(i = 0; i < 1000; i++)
+		flags[i] = 0;
+	L *list = NULL;
+	TAC *tacAux, *tacAux2, *tacAux3;
+	GAD *gadAux = NULL, *newGAD, *g, *gAux, *g2;
 	for(tacAux = tac; tacAux; tacAux = tacAux->next){
 		switch(tacAux->type){
 			case TAC_SYMBOL:
@@ -775,7 +779,6 @@ TAC* tacOptimization(TAC *tac){
 					else
 						newGAD->prev = NULL;
 					gadAux = newGAD;
-
 				}
 				break;
 			case TAC_ADD:
@@ -792,27 +795,147 @@ TAC* tacOptimization(TAC *tac){
 				}
 				else
 					g = addSymbol(g, tacAux->res);
+				break;
 			case TAC_MOV:
-				return NULL;
+				addSymbol(gadFind(tacAux->op1, gadAux), tacAux->res);
 		}
 			
 	}
-
-	gadPrint(gadAux, 0);
+	for(; gadAux->prev; gadAux = gadAux->prev)
+		if(!flags[gadAux->number])
+			gadPrint(gadAux, 0);
+	if(!flags[gadAux->number])
+			gadPrint(gadAux, 0);
 	fprintf(stderr, "\n");
+
+	while(!flag){
+		flag = 1;
+		for(g = gadCopy(gadAux); g; g = gadCopy(g->next)){
+			if(!g->real->flag){
+				flag = 0;
+				flag2 = 1;
+				for(gAux = gadCopy(gadAux); gAux && flag2; gAux = gadCopy(gAux->next)){
+					if(gAux->son1 && gAux->son1->number == g->number && !gAux->flag)
+						flag2 = 0;
+					if(gAux->son2 && gAux->son2->number == g->number && !gAux->flag)
+						flag2 = 0;
+				}
+
+				if(flag2){
+					list = insert(g, list);
+					g2 = gadCopy(g->son1);
+					while(flag2 && g2){			
+						for(gAux = gadCopy(gadAux); gAux && flag2; gAux = gadCopy(gAux->next)){
+							if(gAux->son1 && gAux->son1->number == g2->number && !gAux->flag)
+								flag2 = 0;
+							if(gAux->son2 && gAux->son2->number == g2->number && !gAux->flag)
+								flag2 = 0;
+						}
+						if(flag2 && !g2->real->flag)						
+							list = insert(g2, list);
+						g2 = gadCopy(g2->son1);
+					}
+				}
+			}
+		}
+	}
+
+	fprintf(stderr, "\nL = {");
+	for(; list->next; list = list->next)
+		fprintf(stderr, "%d, ", list->gad->number);
+	fprintf(stderr, "%d}", list->gad->number);
+	fprintf(stderr, "\n");
+	
+	TAC *tacs = NULL;
+
+	for(; list; list = list->prev){
+		if(!tacs){
+			tacs = tacCopy(tacFind(tac, list->gad));
+			tacs->next = NULL;
+			tacs->prev = NULL;
+		}
+		else{
+			tacs->next = tacCopy(tacFind(tac, list->gad));
+			tacs->next->prev = tacs;
+			tacs->next->next = NULL;
+			tacs = tacs->next;
+		}
+		if(list->gad->type != TAC_SYMBOL && list->gad->type != TAC_MOV)
+			for(i = 1; i < 100; i++)
+				if(list->gad->real->symbols[i]){
+					tacs->next = tacCreate(TAC_MOV, list->gad->real->symbols[i], list->gad->real->symbols[0], 0);
+					tacs->next->prev = tacs;
+					tacs->next->next = NULL;
+					tacs = tacs->next;
+				}
+	}
+	for(; tacs->prev; tacs = tacs->prev);
+
+	tacAux2 = tacCopy(tac);
+	tacAux3 = tacCopy(tac);
+	
+	for(; tacAux2->type != TAC_BEGIN_FUN; tacAux2 = tacAux2->next);
+	for(; tacAux3->type != TAC_END_FUN; tacAux3 = tacAux3->next);
+	tacAux2->next = tacs;
+	
+	for(; tacs->next; tacs = tacs->next);
+	tacs->next = tacAux3;
+
+	return tac;
+}
+
+TAC *tacFind(TAC *tac, GAD *gad){
+	TAC *t = tacCopy(tac);
+	for(; t->next; t = t->next);
+	for(; t; t = t->prev)
+		if(gad->real->symbols[0] == t->res && ((gad->type != TAC_SYMBOL) || gad->type == TAC_SYMBOL && t->type == TAC_SYMBOL))
+			return t;
+	printf("erro\n");
 	return NULL;
 }
 
+GAD *gadCopy(GAD *gad){
+	if(!gad)
+		return NULL;
+	GAD *newGAD = calloc(1, sizeof(GAD));
+	newGAD->prev = gad->prev;
+	newGAD->next = gad->next;
+	newGAD->son1 = gad->son1;
+	newGAD->son2 = gad->son2;
+	newGAD->flag = gad->flag;
+	newGAD->number = gad->number;
+	newGAD->real = gad;
+	newGAD->type = gad->type;
+	return newGAD;
+}
+
+TAC *tacCopy(TAC *tac){
+	if(!tac)
+		return NULL;
+	TAC *newTac = calloc(1, sizeof(TAC));
+	newTac->prev = tac->prev;
+	newTac->next = tac->next;
+	newTac->op1 = tac->op1;
+	newTac->op2 = tac->op2;
+	newTac->res = tac->res;
+	newTac->type = tac->type;
+	return newTac;
+}
 
 GAD* gadCreate(TAC *tac, GAD *gad, int nodeNumber){
+	int i;
 	GAD *newGAD = calloc(1, sizeof(GAD));
 	newGAD->type = tac->type;
 	newGAD->symbols[0] = tac->res;
+	for(i = 1; i < 100; i++)
+		newGAD->symbols[i] = NULL;
 	newGAD->op1 = tac->op1;
 	newGAD->op2 = tac->op2;
 	newGAD->son1 = gadFind(tac->op1, gad);
 	newGAD->son2 = gadFind(tac->op2, gad);
 	newGAD->number = nodeNumber;
+	newGAD->flag = 0;
+	newGAD->real = newGAD;
 	return newGAD;
 }
 
@@ -821,8 +944,30 @@ void gadPrint(GAD *gad, int level){
 	fprintf(stderr, "\n");
 	for(i = 0; i < level; i++)
 		fprintf(stderr, "   ");
-	if(gad->symbols[0])
-		fprintf(stderr, "GAD(#%d: %s", gad->number, gad->symbols[0]->text);
+	fprintf(stderr, "GAD(");
+	switch(gad->type)
+	{
+		case TAC_SYMBOL:
+                fprintf(stderr, "SYMBOL");
+                break;
+        case TAC_ADD:
+                fprintf(stderr, "ADD");
+                break;
+        case TAC_SUB:
+                fprintf(stderr, "SUB");
+                break;
+        case TAC_MUL:
+                fprintf(stderr, "MUL");
+                break;
+        case TAC_DIV:
+                fprintf(stderr, "DIV");
+                break;
+        case TAC_MOV:
+                fprintf(stderr, "MOV");
+                break;
+	}
+	fprintf(stderr, "-#%d-%s", gad->number, gad->symbols[0]->text);
+	flags[gad->number] = 1;
 	for(i = 1; i < MAX_SYMBOLS; i++)
 	{ 
 		//fprintf(stderr, "\n(%d, ", gad->type);
@@ -858,10 +1003,21 @@ GAD* gadFind(HASH_NODE *hn, GAD *gad){
 }
 
 GAD *gadFindOp(TAC *tac, GAD *gad){
+	GAD *g;
+	int i, j;
 	if(gad && tac)
 		for(; gad; gad = gad->prev)
-			if(tac->type == gad->type && tac->op1 == gad->op1 && tac->op2 == gad->op2)
-				return gad;
+			if(tac->type == gad->type){
+				if(tac->op1 == gad->op1 && tac->op2 == gad->op2)
+					return gad;
+				if(gad->son1)
+					for(i = 0; i < MAX_SYMBOLS; i++)
+						if(gad->son1->symbols[i] == tac->op1)
+							if(gad->son2)
+								for(j = 0; j < MAX_SYMBOLS; j++)
+									if(gad->son2->symbols[j] == tac->op2)
+										return gad;
+			}
 	return NULL;
 }
 
@@ -873,4 +1029,23 @@ GAD *addSymbol(GAD *gad, HASH_NODE *symbol){
 			break;
 		}
 	return gad;
+}
+
+L* insert(GAD *gad, L *first){
+	L *l;
+	L *newNode = calloc(1, sizeof(L));
+	newNode->gad = gad;
+	newNode->next = NULL;
+
+	if(!first){
+		newNode->prev = NULL;
+		first = newNode;
+	}
+	else{
+		for(l = first; l->next; l = l->next);
+		l->next = newNode;
+		newNode->prev = l;
+	}
+	gad->real->flag = 1;
+	return first;
 }
